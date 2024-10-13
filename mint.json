@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "ChipiPay API",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/chipi-logo.svg",
+    "light": "/logo/chipi-logo.svg"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo/chipi-logo.svg",
   "colors": {
     "primary": "#0D9373",
     "light": "#07C983",
@@ -15,15 +15,21 @@
       "to": "#07C983"
     }
   },
+  "api": {
+    "baseUrl": "https://chipipay.com/api",
+    "auth": {
+      "method": "bearer"
+    }
+  },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "Soporte",
+      "url": "mailto:hello@chipipay.com"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "ChipiPay",
+    "url": "https://chipipay.com"
   },
   "tabs": [
     {
@@ -31,23 +37,7 @@
       "url": "api-reference"
     }
   ],
-  "anchors": [
-    {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
-    }
-  ],
+ 
   "navigation": [
     {
       "group": "Get Started",
@@ -74,18 +64,16 @@
         "api-reference/introduction"
       ]
     },
+    
     {
-      "group": "Endpoint Examples",
+      "group": "Services",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/services/service-buy"
       ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://linkedin.com/company/mintlify"
+    "x": "https://x.com/hichipipay",
+    "youtube": "https://youtube.com/@chipipay"
   }
 }
