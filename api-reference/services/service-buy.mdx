@@ -91,7 +91,7 @@ description: "Endpoint to buy a service using blockchain transaction"
 ```bash cURL 
 curl --location --request POST 'https://api.example.com/api/service-buy' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+--header 'x-api-key: YOUR_API_KEY_HERE' \
 --data-raw '{
   "transactionHash": "0x12345",
   "reference": "123456789012",
