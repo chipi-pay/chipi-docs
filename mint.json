@@ -18,7 +18,8 @@
   "api": {
     "baseUrl": "https://chipipay.com/api",
     "auth": {
-      "method": "bearer"
+      "method": "key",
+      "name": "x-api-key"
     }
   },
   "topbarLinks": [
