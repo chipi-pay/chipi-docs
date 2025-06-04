@@ -1,50 +1,51 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Chipi SDK",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#f3a53a",
+    "light": "#0ab785",
+    "dark": "#0ab785"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
+        "icon": "book-open",
         "groups": [
           {
             "group": "Get Started",
+            "icon": "rocket",
             "pages": [
-              "index",
+              "introduction/welcome",
               "quickstart",
-              "development"
+              "example-apps"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Tutorials",
+            "icon": "graduation-cap",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "tutorials/expo"
             ]
           }
         ]
       },
       {
         "tab": "API Reference",
+        "icon": "code",
         "groups": [
           {
             "group": "API Documentation",
+            "icon": "file-code",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
             "group": "Endpoint Examples",
+            "icon": "server",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
@@ -58,14 +59,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Youtube Tutorials",
+          "href": "https://www.youtube.com/@chipipay",
+          "icon": "youtube"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Telegram",
+          "href": "https://t.me/chipi_pay",
+          "icon": "telegram"
         },
         {
           "anchor": "Blog",
@@ -76,8 +77,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/chipi.png",
+    "dark": "/logo/chipi.png"
   },
   "navbar": {
     "links": [
