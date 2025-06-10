@@ -1,42 +1,267 @@
 ---
-title: Building with Expo
-description: Learn how to integrate Chipi Pay with your Expo application
+title: Expo with Clerk
+description: Learn how to integrate Chipi Pay with your Expo application using Clerk Auth for authentication and biometric security.
 ---
 
 # Building with Expo
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-## Getting Started
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+This guide will walk you through integrating Chipi Pay into your Expo application with biometric authentication and secure storage. We'll cover everything from installation to implementing secure payment flows.
 
 ## Prerequisites
 
-* Node.js 16 or later
-* Expo CLI
-* Basic knowledge of React Native
-* A Chipi Pay account
+- Node.js 16 or later
+- Expo CLI
+- Basic knowledge of React Native
+- A Chipi Pay account
+- Clerk account for authentication
+- Device with biometric authentication support (for biometric features)
+
+## Getting Started
+
+To get started with Chipi Pay in your Expo application, you'll need to have a basic Expo project set up. If you don't have one yet, you can create it using:
+
+```bash
+npx create-expo-app my-chipi-app
+cd my-chipi-app
+```
 
 ## Installation
 
+First, install the required packages:
+
 ```bash
-# Installation steps will go here
+# Install Chipi Pay SDK
+npx expo install @chipi-pay/chipi-expo
+
+# Install Clerk and authentication packages
+npx expo install @clerk/clerk-expo expo-secure-store expo-web-browser
+
+# Install biometric authentication package
+npx expo install expo-local-authentication
 ```
 
 ## Configuration
 
+1. Create a `.env` file in your project root and add your API keys:
+
+```bash
+EXPO_PUBLIC_CHIPI_API_KEY=your_api_key_here
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+```
+
+2. Update your `app.json` to include the required permissions:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ]
+    ],
+    "ios": {
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+      }
+    }
+  }
+}
+```
+
+
+## Implementing Secure Authentication Flow
+
+1. Initialize the SDKs with secure storage:
+
 ```typescript
-// Configuration code will go here
+// App.tsx
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { ChipiProvider } from "@chipi-pay/chipi-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
+
+export default function App() {
+  return (
+    <ClerkProvider 
+      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      tokenCache={tokenCache}
+    >
+      <ChipiProvider apiKey={process.env.EXPO_PUBLIC_CHIPI_API_KEY}>
+        <YourApp />
+      </ChipiProvider>
+    </ClerkProvider>
+  );
+}
+```
+
+
+## Setting up Secure Storage and Biometric Authentication
+
+1. Create a secure storage utility:
+
+```typescript
+// utils/secureStorage.ts
+import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
+import type { WalletData } from '@chipi-pay/chipi-expo';
+
+export const saveWalletStorage = async (pin: string, walletData: WalletData) => {
+  await SecureStore.setItemAsync(
+    "wallet",
+    JSON.stringify(walletData.wallet)
+  );
+  await SecureStore.setItemAsync("wallet_pin", pin, {
+    requireAuthentication: true,
+  });
+}
+
+export const savePinStorage = async (pin: string) => {
+  await SecureStore.setItemAsync("wallet_pin", pin, {
+    requireAuthentication: true,
+  });
+}
+
+export const getPinStorage = async () => {
+  return await SecureStore.getItemAsync("wallet_pin");
+}
+
+export const getWalletStorage = async () => {
+  return await SecureStore.getItemAsync("wallet");
+}
+
+export const deleteSecureItem = async (key: string) => {
+  try {
+    await SecureStore.deleteItemAsync(key);
+  } catch (error) {
+    console.error('Error deleting secure item:', error);
+    throw error;
+  }
+}
+
+export const isBiometricAvailable = async () => {
+  const compatible = await LocalAuthentication.hasHardwareAsync();
+  const enrolled = await LocalAuthentication.isEnrolledAsync();
+  return compatible && enrolled;
+}
+```
+
+
+## Implementing Secure Transfer Flow
+
+Here's an example of implementing a secure transfer flow with biometric authentication:
+
+```typescript
+// screens/TransferScreen.tsx
+import { useState } from "react";
+import { View, Button, Alert, TextInput } from "react-native";
+import { useTransfer } from "@chipi-pay/chipi-expo";
+import { useAuth } from "@clerk/clerk-expo";
+import { getWalletStorage, getPinStorage, isBiometricAvailable } from "../utils/secureStorage";
+
+// Constants
+export const USDC_CONTRACT = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8";
+
+function TransferScreen() {
+  const { transferAsync } = useTransfer();
+  const { getToken } = useAuth();
+  const [amount, setAmount] = useState("");
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleTransfer = async () => {
+    try {
+      setIsProcessing(true);
+      setError("");
+
+      // Check if biometric authentication is available
+      const isBiometricAvailable = await isBiometricAvailable();
+      if (!isBiometricAvailable) {
+        setError("Biometric authentication is not available on this device");
+        return;
+      }
+
+      // Get stored wallet and PIN
+      const storedWallet = await getWalletStorage();
+      if (!storedWallet) {
+        setError("No wallet found. Please create a wallet first.");
+        return;
+      }
+
+      const pin = await getPinStorage();
+      if (!pin) {
+        setError("No PIN found");
+        return;
+      }
+
+      // Get the bearer token
+      const token = await getToken({ template: "chipi-sdk-expo" });
+      if (!token) {
+        setError("No bearer token found");
+        return;
+      }
+
+      // Execute transfer
+      const transferResponse = await transferAsync({
+        encryptKey: pin,
+        bearerToken: token,
+        wallet: JSON.parse(storedWallet),
+        contractAddress: USDC_CONTRACT,
+        recipient: recipientAddress,
+        amount: parseFloat(amount),
+        decimals: 6,
+      });
+
+      Alert.alert("Success", "Transfer completed successfully");
+      
+      // Clear form
+      setAmount("");
+      setRecipientAddress("");
+    } catch (error) {
+      setError(error.message || "Transfer failed");
+      Alert.alert("Error", error.message || "Transfer failed");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <View style={{ padding: 20 }}>
+      {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
+      
+      <TextInput
+        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
+        placeholder="Recipient Address"
+        value={recipientAddress}
+        onChangeText={setRecipientAddress}
+      />
+      
+      <TextInput
+        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
+        placeholder="Amount"
+        value={amount}
+        onChangeText={setAmount}
+        keyboardType="numeric"
+      />
+      
+      <Button 
+        title={isProcessing ? "Processing..." : "Make Transfer"} 
+        onPress={handleTransfer}
+        disabled={isProcessing || !amount || !recipientAddress}
+      />
+    </View>
+  );
+}
 ```
 
 ## Next Steps
 
-* Setting up authentication
-* Implementing payment flows
-* Customizing the UI
-* Testing your integration
+- Add error handling and loading states
+- Customize the UI to match your app's design
 
 <Tip>
-  Need help? Check out our [Discord Community](https://discord.gg/chipi) for support and to connect with other developers.
+  Need help? Check out our [Telegram Community](https://t.me/+hSAmfHZvcY9lN2Rh) for
+  support and to connect with other developers.
 </Tip> 

@@ -1,7 +1,23 @@
 ---
 title: Quickstart
-description: Get started with Chipi Pay in minutes
+description: Quickstart guide for Chipi SDK
 ---
+
+
+
+## Setup Process
+
+### 1. Create an Organization
+
+First, create your organization in our [dashboard](https://dashboard.chipipay.com/).
+
+### 2. Configure Auth Provider
+
+Next, head to [dashboard configuration](https://dashboard.chipipay.com/configure) and add your JWKS Endpoint from your Auth Provider. 
+
+We use this to verify the Bearer Tokens from your Auth Provider used in your frontend.
+
+After adding the JWKS Endpoint, you'll receive a Public Key (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
 
 <Tip>
   You can also refer to one of our sample apps if you want to
@@ -128,4 +144,10 @@ That's it! You should now have an initial working version of Chipi Pay integrate
   To quickly test the integration, you can use our [Test Mode](/test-mode) in development.
 </Tip>
 
-Need help? Join our [Discord Community](https://discord.gg/chipi) to ask us anything on your mind.
+Need help? Join our [Telegram Community](https://t.me/+hSAmfHZvcY9lN2Rh) to ask us anything on your mind.
+
+
+## API Reference
+
+If you need to do something more customized, we are developing a more comprehensive API.
+Stay tuned for updates!

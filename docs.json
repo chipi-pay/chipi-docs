@@ -3,7 +3,7 @@
   "theme": "mint",
   "name": "Chipi SDK",
   "colors": {
-    "primary": "#f3a53a",
+    "primary": "#0ab785",
     "light": "#0ab785",
     "dark": "#0ab785"
   },
@@ -19,15 +19,15 @@
             "icon": "rocket",
             "pages": [
               "introduction/welcome",
-              "quickstart",
-              "example-apps"
+              "quickstart"
             ]
           },
           {
             "group": "Tutorials",
             "icon": "graduation-cap",
             "pages": [
-              "tutorials/expo"
+              "tutorials/expo",
+              "tutorials/nextjs"
             ]
           }
         ]
@@ -54,23 +54,58 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "React/NextJS",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "Hooks",
+            "icon": "fish",
+            "pages": [
+              "api-reference/hooks/use-create-wallet",
+              "api-reference/hooks/use-approve",
+              "api-reference/hooks/use-stake-vesu-usdc",
+              "api-reference/hooks/use-withdraw-vesu-usdc",
+              "api-reference/hooks/use-transfer",
+              "api-reference/hooks/use-call-any-contract"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Expo",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "Hooks",
+            "icon": "file-code",
+            "pages": [
+              "api-reference/hooks/use-create-wallet",
+              "api-reference/hooks/use-approve",
+              "api-reference/hooks/use-stake-vesu-usdc",
+              "api-reference/hooks/use-transfer",
+              "api-reference/hooks/use-call-any-contract"
+            ]
+          }
+        ]
       }
     ],
     "global": {
       "anchors": [
         {
           "anchor": "Youtube Tutorials",
-          "href": "https://www.youtube.com/@chipipay",
+          "href": "https://www.youtube.com/@chipi-pay",
           "icon": "youtube"
         },
         {
           "anchor": "Telegram",
-          "href": "https://t.me/chipi_pay",
+          "href": "https://t.me/+hSAmfHZvcY9lN2Rh",
           "icon": "telegram"
         },
         {
           "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "href": "https://chipipay.com/blog",
           "icon": "newspaper"
         }
       ]
@@ -84,7 +119,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:hi@chipipay.com"
       }
     ],
     "primary": {

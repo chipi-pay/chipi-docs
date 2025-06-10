@@ -1,32 +1,68 @@
-# Mintlify Starter Kit
+# Chipi SDK: The Fastest Way to Ship on StarkNet
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+Chipi SDK combines invisible wallet creation with social login and Avnu's paymaster to streamline dApp development on StarkNet. Users log in with familiar accounts (Google, X, Meta), and a wallet is generated behind the scenes—no manual key management needed. Focus on building features instead of dealing with blockchain complexities.
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+## Features
 
-### Development
+- 🔐 **Invisible Wallet Creation**: Generate wallets automatically with social login
+- 💸 **Gasless Transactions**: Integration with Avnu Paymaster
+- 🔄 **Simple Transfers**: Simplified API for token transfers
+- ⚡ **Optimized for StarkNet**: Designed specifically for the StarkNet network
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
+## Live Demo
 
+https://chipi-sdk-clerk-demo.vercel.app/
+
+## Installation
+
+### Create an Org in the Dashboard
+
+https://dashboard.chipipay.com/
+
+### Bring your own Auth Provider
+
+Next, head to https://dashboard.chipipay.com/configure and add your JWKS Endpoint from your Auth Provider. 
+
+We will use this to verify the Bearer Tokens from your Auth Provider used in your frontend.
+
+After adding the JWKS Endpoint, you will get a Public Key (pk_prod_xxxx). You will need this to initialize the SDK.
+
+### Install the SDK
+
+```bash
+npm install @chipi-pay/chipi-sdk
 ```
-npm i -g mintlify
+
+
+## API
+
+If you need to do something more customized, you can check our API
+
+https://chipi-back-production.up.railway.app/api
+
+## Types
+
+```typescript
+interface ChipiSDKConfig {
+  apiKey: string;
+  rpcUrl: string;
+  argentClassHash?: string;
+  activateContractAddress?: string;
+  activateContractEntryPoint?: string;
+  network: "mainnet" | "sepolia";
+}
+
+interface WalletData {
+  publicKey: string;
+  encryptedPrivateKey: string;
+}
+
+interface TransferParams {
+  encryptKey: string;
+  wallet: WalletData;
+  contractAddress: string;
+  recipient: string;
+  amount: string | number;
+  decimals?: number;
+}
 ```
-
-Run the following command at the root of your documentation (where docs.json is)
-
-```
-mintlify dev
-```
-
-### Publishing Changes
-
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
-
-#### Troubleshooting
-
-- Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
-- Page loads as a 404 - Make sure you are running in a folder with `docs.json`
