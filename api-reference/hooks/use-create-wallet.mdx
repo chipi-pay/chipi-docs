@@ -1,6 +1,6 @@
 ---
 title: 'useCreateWallet'
-description: 'Creates a new Argent-compatible wallet on StarkNet. This hook deploys the wallet contract behind the scenes and uses Avnus paymaster to sponsor gas fees, resulting in a frictionless onboarding experience.'
+description: 'Creates a new Argent-compatible wallet on StarkNet. This hook deploys the wallet contract behind the scenes and uses Avnus gasless to sponsor gas fees, resulting in a frictionless onboarding experience.'
 ---
 
 ## Usage
@@ -137,9 +137,9 @@ export function CreateWallet() {
 ## Error Handling
 
 - Catch and handle RPC connection errors
-- Monitor paymaster API limits
+- Monitor gasless API limits
 - Implement retry logic for failed deployments
 
 <Note>
-  Wallet creation is free! Gas fees are covered by our paymaster integration.
+  Wallet creation is free! Gas fees are covered by our gasless integration.
 </Note> 

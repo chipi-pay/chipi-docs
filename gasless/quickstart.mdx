@@ -1,5 +1,5 @@
 ---
-title: Quickstart - Paymaster
+title: Quickstart - Gasless
 description: Quickstart guide for sponsored transactions with Chipi Pay Sdk
 ---
 
@@ -7,22 +7,22 @@ description: Quickstart guide for sponsored transactions with Chipi Pay Sdk
 
 # Setup Process
 
-## 1. Setup the Paymaster in the Dashboard
+## 1. Setup the Gasless in the Dashboard
 
 First, create your organization in our [dashboard](https://dashboard.chipipay.com/).
 
-Next, head to [Paymaster Settings](https://dashboard.chipipay.com/configure/paymaster)
+Next, head to [Gasless Settings](https://dashboard.chipipay.com/configure/gasless)
 
 You'll need to add a JWKS Endpoint from your Auth Provider to authenticate the sponsoring of transactions.
 
 <div className="flex justify-center">
-  <img src="/images/paymaster/configure-paymaster-1.png" alt="JWKS Setup" />
+  <img src="/images/gasless/configure-gasless-1.png" alt="JWKS Setup" />
 </div>
 
 Which will give you access to your Public Key (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
 
 <div className="flex justify-center">
-  <img src="/images/paymaster/configure-paymaster-2.png" alt="JWKS Setup" />
+  <img src="/images/gasless/configure-gasless-2.png" alt="JWKS Setup" />
 </div>
 
 You won't need the Secret Key (`sk_prod_xxxx`) for the SDK.
@@ -33,7 +33,7 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
   clone a full application rather than embed into an existing one!
 </Tip>
 
-## 2. Setup the Chipi SDK in your project to use the Paymaster
+## 2. Setup the Chipi SDK in your project to use the Gasless
 
 ### Select your Framework
 

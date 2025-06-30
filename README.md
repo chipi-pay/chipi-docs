@@ -1,11 +1,11 @@
 # Chipi SDK: The Fastest Way to Ship on StarkNet
 
-Chipi SDK combines invisible wallet creation with social login and Avnu's paymaster to streamline dApp development on StarkNet. Users log in with familiar accounts (Google, X, Meta), and a wallet is generated behind the scenes—no manual key management needed. Focus on building features instead of dealing with blockchain complexities.
+Chipi SDK combines invisible wallet creation with social login and Avnu's gasless to streamline dApp development on StarkNet. Users log in with familiar accounts (Google, X, Meta), and a wallet is generated behind the scenes—no manual key management needed. Focus on building features instead of dealing with blockchain complexities.
 
 ## Features
 
 - 🔐 **Invisible Wallet Creation**: Generate wallets automatically with social login
-- 💸 **Gasless Transactions**: Integration with Avnu Paymaster
+- 💸 **Gasless Transactions**: Integration with Avnu Gasless
 - 🔄 **Simple Transfers**: Simplified API for token transfers
 - ⚡ **Optimized for StarkNet**: Designed specifically for the StarkNet network
 
