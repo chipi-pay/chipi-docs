@@ -1,0 +1,298 @@
+---
+title: 'Buy Service'
+description: 'Purchase a service using blockchain transaction'
+openapi: 'POST /sku-transactions'
+---
+
+<Method name="POST" />
+
+<RequestExample url="https://api.chipipay.com/v1/sku-transactions" method="POST">
+
+```bash cURL
+curl -X POST "https://api.chipipay.com/v1/sku-transactions" \
+  -H "Authorization: Bearer sk_prod_xxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+    "skuId": "sku-tl-TEL010",
+    "chainId": "STARKNET",
+    "chainToken": "USDC",
+    "mxnAmount": 10,
+    "reference": "7773271789",
+    "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  }'
+```
+
+```typescript TypeScript
+const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
+    skuId: "sku-tl-TEL010",
+    chainId: "STARKNET",
+    chainToken: "USDC",
+    mxnAmount: 10,
+    reference: "7773271789",
+    transactionHash: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  })
+});
+
+const transaction = await response.json();
+console.log(transaction);
+```
+
+```python Python
+import requests
+import json
+
+url = "https://api.chipipay.com/v1/sku-transactions"
+headers = {
+    "Authorization": "Bearer sk_prod_xxxx",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+    "skuId": "sku-tl-TEL010",
+    "chainId": "STARKNET",
+    "chainToken": "USDC",
+    "mxnAmount": 10,
+    "reference": "7773271789",
+    "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+}
+
+response = requests.post(url, headers=headers, json=data)
+transaction = response.json()
+print(transaction)
+```
+
+</RequestExample>
+
+<ResponseExample url="https://api.chipipay.com/v1/sku-transactions" method="POST">
+
+```json 200 Response
+{
+  "id": "tx_1234567890abcdef",
+  "orgId": "org_1234567890abcdef",
+  "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+  "skuId": "sku-tl-TEL010",
+  "mxnAmount": 10,
+  "usdAmount": 0.59,
+  "reference": "7773271789",
+  "fileNumber": null,
+  "status": "pending",
+  "chainId": "STARKNET",
+  "chainToken": "USDC",
+  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "errorMessage": null,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "invalid_request",
+  "message": "Missing required field: skuId"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "invalid_sku",
+  "message": "SKU not found or inactive"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "invalid_transaction",
+  "message": "Transaction hash not found or invalid"
+}
+```
+
+```json 401 Unauthorized
+{
+  "error": "unauthorized",
+  "message": "Invalid or missing API key"
+}
+```
+
+```json 429 Too Many Requests
+{
+  "error": "rate_limit_exceeded",
+  "message": "Rate limit exceeded. Please try again later."
+}
+```
+
+</ResponseExample>
+
+## Overview
+
+Purchase a service using a blockchain transaction. Before calling this endpoint, you must first process a payment using the Chipi Pay smart contract and provide the transaction hash.
+
+## Endpoint
+
+```
+POST /sku-transactions
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Your secret key prefixed with "Bearer "
+</ParamField>
+
+<ParamField header="Content-Type" type="string">
+  application/json
+</ParamField>
+
+## Request Body
+
+<ParamField body="walletAddress" type="string" required>
+  The wallet address that made the payment transaction
+</ParamField>
+
+<ParamField body="skuId" type="string" required>
+  The SKU ID of the service you want to purchase (obtained from GET /skus)
+</ParamField>
+
+<ParamField body="chainId" type="string" required>
+  The blockchain network ID. Currently only "STARKNET" is supported
+</ParamField>
+
+<ParamField body="chainToken" type="string" required>
+  The token used for payment. Currently only "USDC" is supported
+</ParamField>
+
+<ParamField body="mxnAmount" type="number" required>
+  The amount in MXN (Mexican Pesos) for the service
+</ParamField>
+
+<ParamField body="reference" type="string" required>
+  A unique reference number for this transaction (e.g., phone number, account number)
+</ParamField>
+
+<ParamField body="transactionHash" type="string" required>
+  The transaction hash from the blockchain payment
+</ParamField>
+
+## Response Fields
+
+<ParamField body="id" type="string">
+  Unique identifier for this transaction
+</ParamField>
+
+<ParamField body="orgId" type="string">
+  Organization ID that created the transaction
+</ParamField>
+
+<ParamField body="walletAddress" type="string">
+  The wallet address that made the payment
+</ParamField>
+
+<ParamField body="skuId" type="string">
+  The SKU ID of the purchased service
+</ParamField>
+
+<ParamField body="mxnAmount" type="number">
+  The amount in MXN
+</ParamField>
+
+<ParamField body="usdAmount" type="number">
+  The amount in USD (calculated from MXN)
+</ParamField>
+
+<ParamField body="reference" type="string">
+  The reference number provided
+</ParamField>
+
+<ParamField body="fileNumber" type="string">
+  File number for the transaction (if applicable, null otherwise)
+</ParamField>
+
+<ParamField body="status" type="string">
+  Current status of the transaction ("pending", "processing", "completed", "failed")
+</ParamField>
+
+<ParamField body="chainId" type="string">
+  The blockchain network used
+</ParamField>
+
+<ParamField body="chainToken" type="string">
+  The token used for payment
+</ParamField>
+
+<ParamField body="transactionHash" type="string">
+  The blockchain transaction hash
+</ParamField>
+
+<ParamField body="errorMessage" type="string">
+  Error message if the transaction failed (null if successful)
+</ParamField>
+
+<ParamField body="createdAt" type="string">
+  ISO 8601 timestamp of when the transaction was created
+</ParamField>
+
+<ParamField body="updatedAt" type="string">
+  ISO 8601 timestamp of when the transaction was last updated
+</ParamField>
+
+## Webhook Notifications
+
+Once the transaction is submitted, you'll receive status updates via webhooks at the URL you configured in your dashboard. The webhook payload will include the transaction status and any additional details about the service delivery.
+
+## Error Responses
+
+<ResponseExample url="https://api.chipipay.com/v1/sku-transactions" method="POST">
+
+```json 400 Bad Request
+{
+  "error": "invalid_request",
+  "message": "Missing required field: skuId"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "invalid_sku",
+  "message": "SKU not found or inactive"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "invalid_transaction",
+  "message": "Transaction hash not found or invalid"
+}
+```
+
+```json 401 Unauthorized
+{
+  "error": "unauthorized",
+  "message": "Invalid or missing API key"
+}
+```
+
+```json 429 Too Many Requests
+{
+  "error": "rate_limit_exceeded",
+  "message": "Rate limit exceeded. Please try again later."
+}
+```
+
+</ResponseExample>
+
+## Smart Contract Integration
+
+Before calling this endpoint, you must process the payment using the Chipi Pay smart contract:
+
+- **Starknet Contract**: [GitHub Repository](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol)
+- **EVM Contract**: [GitHub Repository](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol)
+
+The transaction hash from the smart contract payment is required to complete the service purchase. 

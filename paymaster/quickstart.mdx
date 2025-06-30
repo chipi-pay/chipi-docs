@@ -1,30 +1,41 @@
 ---
-title: Quickstart
-description: Quickstart guide for Chipi SDK
+title: Quickstart - Paymaster
+description: Quickstart guide for sponsored transactions with Chipi Pay Sdk
 ---
 
 
 
-## Setup Process
+# Setup Process
 
-### 1. Create an Organization
+## 1. Setup the Paymaster in the Dashboard
 
 First, create your organization in our [dashboard](https://dashboard.chipipay.com/).
 
-### 2. Configure Auth Provider
+Next, head to [Paymaster Settings](https://dashboard.chipipay.com/configure/paymaster)
 
-Next, head to [dashboard configuration](https://dashboard.chipipay.com/configure) and add your JWKS Endpoint from your Auth Provider. 
+You'll need to add a JWKS Endpoint from your Auth Provider to authenticate the sponsoring of transactions.
 
-We use this to verify the Bearer Tokens from your Auth Provider used in your frontend.
+<div className="flex justify-center">
+  <img src="/images/paymaster/configure-paymaster-1.png" alt="JWKS Setup" />
+</div>
 
-After adding the JWKS Endpoint, you'll receive a Public Key (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
+Which will give you access to your Public Key (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
+
+<div className="flex justify-center">
+  <img src="/images/paymaster/configure-paymaster-2.png" alt="JWKS Setup" />
+</div>
+
+You won't need the Secret Key (`sk_prod_xxxx`) for the SDK.
+As all requests are validated by the JWKS Endpoint using your auth provider.
 
 <Tip>
   You can also refer to one of our sample apps if you want to
   clone a full application rather than embed into an existing one!
 </Tip>
 
-## Select your Framework
+## 2. Setup the Chipi SDK in your project to use the Paymaster
+
+### Select your Framework
 
 <Tabs>
   <Tab title="Next.js">

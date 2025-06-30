@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Chipi Pay API",
+    "description": "API for buying services with Chipi Pay",
     "license": {
       "name": "MIT"
     },
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.chipipay.com/v1"
     }
   ],
   "security": [
@@ -19,36 +19,65 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/skus": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "summary": "Get SKUs",
+        "description": "Retrieve a list of available services (SKUs) for purchase",
         "parameters": [
           {
-            "name": "limit",
+            "name": "categories",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "Filter by service categories",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "TELEPEAJE",
+                  "TELEFONIA",
+                  "GENERAL",
+                  "TESORERIA",
+                  "LUZ",
+                  "INTERNET",
+                  "TV",
+                  "MOVILIDAD",
+                  "RECARGAS",
+                  "GIFT_CARDS",
+                  "GAMING",
+                  "VENTAS_CATALOGO",
+                  "DEPORTES",
+                  "STREAMING"
+                ]
+              }
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "List of SKUs",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "$ref": "#/components/schemas/Sku"
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
             "content": {
               "application/json": {
                 "schema": {
@@ -58,15 +87,18 @@
             }
           }
         }
-      },
+      }
+    },
+    "/sku-transactions": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Buy Service",
+        "description": "Purchase a service using blockchain transaction",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "description": "Service purchase request",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/BuyServiceRequest"
               }
             }
           },
@@ -74,17 +106,17 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Transaction created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/SkuTransaction"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -92,32 +124,9 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
           },
-          "400": {
-            "description": "unexpected error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -125,28 +134,16 @@
                 }
               }
             }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
           }
         }
       }
@@ -154,63 +151,217 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "Sku": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the SKU"
+          },
+          "providerId": {
+            "type": "string",
+            "description": "Provider identifier"
+          },
           "name": {
-            "description": "The name of the plant",
-            "type": "string"
+            "type": "string",
+            "description": "Display name of the service"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the service"
           },
-          {
-            "required": [
-              "id"
+          "category": {
+            "type": "string",
+            "enum": [
+              "TELEPEAJE",
+              "TELEFONIA",
+              "GENERAL",
+              "TESORERIA",
+              "LUZ",
+              "INTERNET",
+              "TV",
+              "MOVILIDAD",
+              "RECARGAS",
+              "GIFT_CARDS",
+              "GAMING",
+              "VENTAS_CATALOGO",
+              "DEPORTES",
+              "STREAMING"
             ],
+            "description": "Service category"
+          },
+          "skuProvider": {
             "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+            "description": "Provider information"
+          },
+          "referenceRegexValidation": {
+            "type": "string",
+            "description": "Regex pattern for validating reference input"
+          },
+          "referenceLabel": {
+            "type": "string",
+            "description": "Label for the reference field"
+          },
+          "amountRegexValidation": {
+            "type": "string",
+            "description": "Regex pattern for validating amount input"
+          },
+          "amountLabel": {
+            "type": "string",
+            "description": "Label for the amount field"
+          },
+          "fixedAmount": {
+            "type": "number",
+            "description": "Fixed amount for the service (if applicable)"
+          },
+          "canCheckSkuReference": {
+            "type": "boolean",
+            "description": "Whether the SKU reference can be validated"
+          },
+          "logoUrl": {
+            "type": "string",
+            "description": "URL to the service logo"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of when the SKU was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of when the SKU was last updated"
           }
-        ]
+        },
+        "required": ["id", "providerId", "name", "category", "skuProvider", "referenceRegexValidation", "referenceLabel", "amountRegexValidation", "amountLabel", "canCheckSkuReference"]
+      },
+      "BuyServiceRequest": {
+        "type": "object",
+        "properties": {
+          "walletAddress": {
+            "type": "string",
+            "description": "The wallet address that made the payment transaction"
+          },
+          "skuId": {
+            "type": "string",
+            "description": "The SKU ID of the service you want to purchase"
+          },
+          "chainId": {
+            "type": "string",
+            "enum": ["STARKNET"],
+            "description": "The blockchain network ID"
+          },
+          "chainToken": {
+            "type": "string",
+            "enum": ["USDC"],
+            "description": "The token used for payment"
+          },
+          "mxnAmount": {
+            "type": "number",
+            "description": "The amount in MXN (Mexican Pesos) for the service"
+          },
+          "reference": {
+            "type": "string",
+            "description": "A unique reference number for this transaction (e.g., phone number, account number)"
+          },
+          "transactionHash": {
+            "type": "string",
+            "description": "The transaction hash from the blockchain payment"
+          }
+        },
+        "required": ["walletAddress", "skuId", "chainId", "chainToken", "mxnAmount", "reference", "transactionHash"]
+      },
+      "SkuTransaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this transaction"
+          },
+          "orgId": {
+            "type": "string",
+            "description": "Organization ID that created the transaction"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "The wallet address that made the payment"
+          },
+          "skuId": {
+            "type": "string",
+            "description": "The SKU ID of the purchased service"
+          },
+          "mxnAmount": {
+            "type": "number",
+            "description": "The amount in MXN"
+          },
+          "usdAmount": {
+            "type": "number",
+            "description": "The amount in USD"
+          },
+          "reference": {
+            "type": "string",
+            "description": "The reference number provided"
+          },
+          "fileNumber": {
+            "type": "string",
+            "description": "File number for the transaction (if applicable)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "processing", "completed", "failed"],
+            "description": "Current status of the transaction"
+          },
+          "chainId": {
+            "type": "string",
+            "enum": ["STARKNET"],
+            "description": "The blockchain network used"
+          },
+          "chainToken": {
+            "type": "string",
+            "enum": ["USDC"],
+            "description": "The token used for payment"
+          },
+          "transactionHash": {
+            "type": "string",
+            "description": "The blockchain transaction hash"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message if the transaction failed"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of when the transaction was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of when the transaction was last updated"
+          }
+        },
+        "required": ["id", "orgId", "walletAddress", "skuId", "mxnAmount", "usdAmount", "reference", "status", "chainId", "chainToken", "transactionHash", "createdAt", "updatedAt"]
       },
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
         "type": "object",
         "properties": {
           "error": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string",
+            "description": "Error code"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Error message"
           }
-        }
+        },
+        "required": ["error", "message"]
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

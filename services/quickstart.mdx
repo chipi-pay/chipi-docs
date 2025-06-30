@@ -1,0 +1,125 @@
+---
+title: Quickstart - Buying Services
+description: Quickstart guide for buying services with Chipi Pay Sdk
+---
+
+
+
+# Setup Process
+
+## 1. Setup Buying Services in the Dashboard
+
+First, create your organization in our [dashboard](https://dashboard.chipipay.com/).
+
+Next, head to [Services Settings](https://dashboard.chipipay.com/configure/skus)
+
+You'll need to add a Webhook URL to where you want to receive updates on the status of the purchase of services.
+
+<div className="flex justify-center">
+  <img src="/images/selling-services/configure-services-1.png" alt="JWKS Setup" />
+</div>
+
+Which will give you access to your Api keys. 
+
+<div className="flex justify-center">
+  <img src="/images/selling-services/configure-services-2.png" alt="JWKS Setup" />
+</div>
+
+
+For Buying Services, you'll only need your Secret Key (`sk_prod_xxxx`). 
+
+
+<Tip>
+  For testing purposes, set your environment to development in the dashboard. 
+  This will give you a secret key that doesn't require a valid transaction hash,
+   making it easier to test the endpoints without needing to process actual transactions.
+</Tip>
+
+Keep this handy as you'll need it to authenticate API Requests to buy services.
+
+You won't need your Public Key (`pk_prod_xxxx`) for now. In coming weeks we'll be adding a way to buy services inside our SDK using both keys.
+
+
+
+
+## 2. Use the Secret Key to call the Chipi Pay API to buy services
+
+There are 2 main endpoints you'll need to call to buy services. You can check the [API Reference](/api-reference) for more details on the endpoints and how to use them.
+
+### 1. Get Skus
+
+Typescript Example:
+```ts
+const response = await fetch("https://api.chipipay.com/v1/skus", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`
+  }
+});
+
+const data = await response.json();
+```
+
+This will return a list of SKUs that are available for purchase. 
+You will need the <code>sku_id</code> to buy a service.
+The rest of the fields are useful for displaying the service details to the user.
+
+
+### 2. Buy a Service
+
+Before calling this endpoint, you'll need to use our Smart Contract to pay for the required service. 
+
+You can find the Starknet Smart Contract [here](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol).
+
+You can find the EVM Smart Contract [here](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol).
+
+
+Once you have the transaction hash, you can call the endpoint to buy the service.
+
+Typescript Example:
+```ts
+const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`
+  },
+  body: JSON.stringify({
+    "walletAddress": "wallet-address",
+    "skuId": "sku-tl-TEL010", // The SKU ID of the service you want to buy
+    "chainId": "STARKNET", // For now only Starknet is supported
+    "chainToken": "USDC", // For now only USDC is supported
+    "mxnAmount": 10
+    "reference": "7773271789"
+    "transactionHash": "0x1234567890" // This is the transaction hash of the transaction that will be used to sponsor the transaction
+    })
+});
+
+const data = await response.json();
+```
+
+Once the transaction is confirmed, you'll receive a response with the status of the transaction in your <b>webhook URL</b>.
+
+You can check the [API Reference](/api-reference) for more details on the endpoints and how to use them.
+
+
+
+
+
+
+## Celebrate & Learn More!
+
+That's it! You should now have an initial working version of Chipi Pay integrated into your application. You can now start implementing various features like:
+
+* [API Integration](/api-reference)
+
+<Tip>
+  To quickly test the integration, you can use our [Test Mode](/test-mode) in development.
+</Tip>
+
+Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) to ask us anything on your mind.
+
+
+## API Reference
+
+If you need to do something more customized, we are developing a more comprehensive API.
+Stay tuned for updates!

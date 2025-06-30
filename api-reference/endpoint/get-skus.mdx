@@ -1,0 +1,279 @@
+---
+title: 'Get SKUs'
+description: 'Retrieve a list of available services (SKUs) for purchase'
+openapi: 'GET /skus'
+---
+
+<RequestExample url="https://api.chipipay.com/v1/skus" method="GET">
+
+```bash cURL
+curl -X GET "https://api.chipipay.com/v1/skus" \
+  -H "Authorization: Bearer sk_prod_xxxx" \
+  -H "Content-Type: application/json"
+```
+
+```typescript TypeScript
+const response = await fetch("https://api.chipipay.com/v1/skus", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`,
+    "Content-Type": "application/json"
+  }
+});
+
+const skus = await response.json();
+console.log(skus);
+```
+
+```python Python
+import requests
+
+url = "https://api.chipipay.com/v1/skus"
+headers = {
+    "Authorization": "Bearer sk_prod_xxxx",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)
+skus = response.json()
+print(skus)
+```
+
+</RequestExample>
+
+<ResponseExample url="https://api.chipipay.com/v1/skus" method="GET">
+
+```json 200 Response
+[
+  {
+    "id": "sku-tl-TEL010",
+    "providerId": "telcel",
+    "name": "Telcel 10 MXN",
+    "description": "10 MXN credit for Telcel mobile service",
+    "category": "TELEFONIA",
+    "skuProvider": {
+      "id": "telcel",
+      "name": "Telcel",
+      "logoUrl": "https://example.com/telcel-logo.png"
+    },
+    "referenceRegexValidation": "^[0-9]{10}$",
+    "referenceLabel": "Phone Number",
+    "amountRegexValidation": "^[0-9]+(\.[0-9]{1,2})?$",
+    "amountLabel": "Amount (MXN)",
+    "fixedAmount": 10,
+    "canCheckSkuReference": true,
+    "logoUrl": "https://example.com/sku-logo.png",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "sku-tl-TEL020",
+    "providerId": "telcel",
+    "name": "Telcel 20 MXN",
+    "description": "20 MXN credit for Telcel mobile service",
+    "category": "TELEFONIA",
+    "skuProvider": {
+      "id": "telcel",
+      "name": "Telcel",
+      "logoUrl": "https://example.com/telcel-logo.png"
+    },
+    "referenceRegexValidation": "^[0-9]{10}$",
+    "referenceLabel": "Phone Number",
+    "amountRegexValidation": "^[0-9]+(\.[0-9]{1,2})?$",
+    "amountLabel": "Amount (MXN)",
+    "fixedAmount": 20,
+    "canCheckSkuReference": true,
+    "logoUrl": "https://example.com/sku-logo.png",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+```json 404 Unknown Categories
+{
+  "error": "invalid_categories",
+  "message": "One or more categories are not valid. Valid categories: TELEPEAJE, TELEFONIA, GENERAL, TESORERIA, LUZ, INTERNET, TV, MOVILIDAD, RECARGAS, GIFT_CARDS, GAMING, VENTAS_CATALOGO, DEPORTES, STREAMING"
+}
+```
+
+</ResponseExample>
+
+## Overview
+
+Retrieve a list of all available services (SKUs) that can be purchased through the Chipi Pay API.
+
+## Endpoint
+
+```
+GET /skus
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  Your secret key prefixed with "Bearer "
+</ParamField>
+
+<ParamField header="Content-Type" type="string">
+  application/json
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="categories" type="array">
+  Filter by service categories. Available categories:
+  - `TELEPEAJE` - Toll payments
+  - `TELEFONIA` - Phone services
+  - `GENERAL` - General services
+  - `TESORERIA` - Treasury services
+  - `LUZ` - Electricity services
+  - `INTERNET` - Internet services
+  - `TV` - Television services
+  - `MOVILIDAD` - Mobility services
+  - `RECARGAS` - Recharge services
+  - `GIFT_CARDS` - Gift cards
+  - `GAMING` - Gaming services
+  - `VENTAS_CATALOGO` - Catalog sales
+  - `DEPORTES` - Sports services
+  - `STREAMING` - Streaming services
+</ParamField>
+
+## Response Fields
+
+<ParamField body="id" type="string">
+  Unique identifier for the SKU
+</ParamField>
+
+<ParamField body="providerId" type="string">
+  Provider identifier
+</ParamField>
+
+<ParamField body="name" type="string">
+  Display name of the service
+</ParamField>
+
+<ParamField body="description" type="string">
+  Detailed description of the service
+</ParamField>
+
+<ParamField body="category" type="string">
+  Service category (see available categories above)
+</ParamField>
+
+<ParamField body="skuProvider" type="object">
+  Provider information object
+</ParamField>
+
+<ParamField body="skuProvider.id" type="string">
+  Provider ID
+</ParamField>
+
+<ParamField body="skuProvider.name" type="string">
+  Provider name
+</ParamField>
+
+<ParamField body="skuProvider.logoUrl" type="string">
+  Provider logo URL
+</ParamField>
+
+<ParamField body="referenceRegexValidation" type="string">
+  Regex pattern for validating reference input (e.g., phone number format)
+</ParamField>
+
+<ParamField body="referenceLabel" type="string">
+  Label for the reference field (e.g., "Phone Number", "Account Number")
+</ParamField>
+
+<ParamField body="amountRegexValidation" type="string">
+  Regex pattern for validating amount input
+</ParamField>
+
+<ParamField body="amountLabel" type="string">
+  Label for the amount field (e.g., "Amount (MXN)")
+</ParamField>
+
+<ParamField body="fixedAmount" type="number">
+  Fixed amount for the service (if applicable, null for variable amounts)
+</ParamField>
+
+<ParamField body="canCheckSkuReference" type="boolean">
+  Whether the SKU reference can be validated before purchase
+</ParamField>
+
+<ParamField body="logoUrl" type="string">
+  URL to the service logo
+</ParamField>
+
+<ParamField body="createdAt" type="string">
+  ISO 8601 timestamp of when the SKU was created
+</ParamField>
+
+<ParamField body="updatedAt" type="string">
+  ISO 8601 timestamp of when the SKU was last updated
+</ParamField>
+
+## Example Usage
+
+```bash
+# Get all SKUs
+curl -X GET "https://api.chipipay.com/v1/skus" \
+  -H "Authorization: Bearer sk_prod_xxxx" \
+  -H "Content-Type: application/json"
+
+# Get only phone services
+curl -X GET "https://api.chipipay.com/v1/skus?categories=TELEFONIA" \
+  -H "Authorization: Bearer sk_prod_xxxx" \
+  -H "Content-Type: application/json"
+
+# Get multiple categories
+curl -X GET "https://api.chipipay.com/v1/skus?categories=TELEFONIA&categories=INTERNET" \
+  -H "Authorization: Bearer sk_prod_xxxx" \
+  -H "Content-Type: application/json"
+```
+
+```typescript
+// Get all SKUs
+const response = await fetch("https://api.chipipay.com/v1/skus", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`,
+    "Content-Type": "application/json"
+  }
+});
+
+const skus = await response.json();
+console.log(skus);
+
+// Get only phone services
+const phoneResponse = await fetch("https://api.chipipay.com/v1/skus?categories=TELEFONIA", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`,
+    "Content-Type": "application/json"
+  }
+});
+
+const phoneSkus = await phoneResponse.json();
+console.log(phoneSkus);
+```
+
+## Error Responses
+
+<ResponseExample url="https://api.chipipay.com/v1/skus" method="GET">
+
+```json 401 Unauthorized
+{
+  "error": "unauthorized",
+  "message": "Invalid or missing API key"
+}
+```
+
+```json 429 Too Many Requests
+{
+  "error": "rate_limit_exceeded",
+  "message": "Rate limit exceeded. Please try again later."
+}
+```
+
+</ResponseExample> 

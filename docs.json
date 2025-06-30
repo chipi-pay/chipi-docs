@@ -19,15 +19,16 @@
             "icon": "rocket",
             "pages": [
               "introduction/welcome",
-              "quickstart"
+              "paymaster/quickstart",
+              "services/quickstart"
             ]
           },
           {
-            "group": "Tutorials",
+            "group": "Paymaster Tutorials",
             "icon": "graduation-cap",
             "pages": [
-              "tutorials/expo",
-              "tutorials/nextjs"
+              "paymaster/tutorials/expo",
+              "paymaster/tutorials/nextjs"
             ]
           }
         ]
@@ -44,19 +45,18 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
-            "icon": "server",
+            "group": "Buying Services",
+            "icon": "cart-shopping",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/get-skus",
+              "api-reference/endpoint/buy-service",
+              "api-reference/endpoint/webhooks"
             ]
           }
         ]
       },
       {
-        "tab": "React/NextJS",
+        "tab": "React Hooks",
         "icon": "code",
         "groups": [
           {
@@ -72,44 +72,8 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "Expo",
-        "icon": "code",
-        "groups": [
-          {
-            "group": "Hooks",
-            "icon": "file-code",
-            "pages": [
-              "api-reference/hooks/use-create-wallet",
-              "api-reference/hooks/use-approve",
-              "api-reference/hooks/use-stake-vesu-usdc",
-              "api-reference/hooks/use-transfer",
-              "api-reference/hooks/use-call-any-contract"
-            ]
-          }
-        ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Youtube Tutorials",
-          "href": "https://www.youtube.com/@chipi-pay",
-          "icon": "youtube"
-        },
-        {
-          "anchor": "Telegram",
-          "href": "https://t.me/+e2qjHEOwImkyZDVh",
-          "icon": "telegram"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://chipipay.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/chipi.png",
@@ -119,7 +83,9 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@chipipay.com"
+        "href": "https://t.me/+e2qjHEOwImkyZDVh",
+        "icon": "telegram"
+        
       }
     ],
     "primary": {
