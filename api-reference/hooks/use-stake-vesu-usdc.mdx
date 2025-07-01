@@ -60,6 +60,8 @@ export function StakeForm() {
   const handleStake = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const bearerToken = await getBearerToken();
+
     try {
       await stakeAsync({
         encryptKey: form.pin,
@@ -69,7 +71,7 @@ export function StakeForm() {
         },
         amount: form.amount,
         receiverWallet: form.receiverWallet,
-        bearerToken: "your-bearer-token"
+        bearerToken
       });
     } catch (err) {
       console.error('Staking failed:', err);

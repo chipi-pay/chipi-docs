@@ -60,6 +60,8 @@ export function WithdrawForm() {
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const bearerToken = await getBearerToken();
+
     try {
       await withdrawAsync({
         encryptKey: form.pin,
@@ -69,7 +71,7 @@ export function WithdrawForm() {
         },
         amount: form.amount,
         recipient: form.recipient,
-        bearerToken: "your-bearer-token"
+        bearerToken
       });
     } catch (err) {
       console.error('Withdrawal failed:', err);

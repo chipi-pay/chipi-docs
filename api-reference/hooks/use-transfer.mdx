@@ -22,6 +22,7 @@ const {
 - `recipient` (string): Destination wallet address
 - `amount` (string | number): Transfer amount
 - `decimals` (number): Token decimals (default: 18)
+- `bearerToken` (string): Bearer token for authentication
 
 ### Return Value
 
@@ -56,6 +57,8 @@ export function TransferForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const bearerToken = await getBearerToken();
+
     try {
       await transferAsync({
         encryptKey: form.pin,
@@ -63,6 +66,7 @@ export function TransferForm() {
           publicKey: "0x123...yourPublicKeyHere",
           encryptedPrivateKey: "encrypted:key:data"
         },
+        bearerToken,
         contractAddress: BROTHER_TOKEN.address,
         recipient: form.recipient,
         amount: form.amount,

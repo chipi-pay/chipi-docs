@@ -25,7 +25,7 @@
           },
           {
             "group": "Gasless Tutorials",
-            "icon": "graduation-cap",
+            "icon": "gas-pump",
             "pages": [
               "gasless/tutorials/expo",
               "gasless/tutorials/nextjs"
@@ -60,8 +60,8 @@
         "icon": "code",
         "groups": [
           {
-            "group": "Hooks",
-            "icon": "fish",
+            "group": "Gasless Hooks",
+            "icon": "gas-pump",
             "pages": [
               "api-reference/hooks/use-create-wallet",
               "api-reference/hooks/use-approve",

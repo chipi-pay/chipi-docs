@@ -17,6 +17,7 @@ const {
 ### Parameters
 
 - `pin` (string): A user-defined code or password used to encrypt the wallet's private key.
+- `bearerToken` (string): Bearer token for authentication
 
 ### Return Value
 
@@ -47,8 +48,9 @@ export function CreateWallet() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const bearerToken = await getBearerToken();
     try {
-      await createWalletAsync(pin);
+      await createWalletAsync({ pin, bearerToken });
       alert('Wallet created successfully!');
     } catch (err) {
       console.error('Wallet creation failed:', err);

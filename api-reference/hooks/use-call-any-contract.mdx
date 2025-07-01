@@ -22,6 +22,7 @@ const {
 - `contractAddress` (string): Target contract address
 - `entrypoint` (string): Contract method name
 - `calldata` (any[]): Arguments for the contract method
+- `bearerToken` (string): Bearer token for authentication
 
 ### Return Value
 
@@ -52,6 +53,8 @@ export function GenericContractForm() {
   const handleCall = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const bearerToken = await getBearerToken();
+
     try {
       await callAsync({
         encryptKey: form.pin,
@@ -59,6 +62,7 @@ export function GenericContractForm() {
           publicKey: "0x123...yourPublicKeyHere",
           encryptedPrivateKey: "encrypted:key:data"
         },
+        bearerToken,
         contractAddress: form.contractAddress,
         entrypoint: form.entrypoint,
         calldata: JSON.parse(form.calldata || "[]")

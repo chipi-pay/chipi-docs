@@ -17,6 +17,7 @@ const { approveAsync, approveData, isLoading, error } = useApprove();
 - `spender` (string): Contract address to authorize
 - `amount` (string | number): Maximum spend allowance
 - `decimals` (number): Token decimals (default: 18)
+- `bearerToken` (string): Bearer token for authentication
 
 ### Return Value
 
@@ -54,6 +55,8 @@ export function ApproveForm() {
   const handleApprove = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const bearerToken = await getBearerToken();
+
     try {
       await approveAsync({
         encryptKey: form.pin,
@@ -61,6 +64,7 @@ export function ApproveForm() {
           publicKey: wallet.publicKey,
           encryptedPrivateKey: wallet.encryptedPrivateKey
         },
+        bearerToken,
         contractAddress: VESU_CONTRACT,
         spender: VESU_CONTRACT, // Authorizing VESU contract
         amount: form.amount,
