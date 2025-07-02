@@ -38,7 +38,7 @@ npm install @chipi-pay/chipi-sdk
 
 If you need to do something more customized, you can check our API
 
-https://chipi-back-production.up.railway.app/api
+https://api.chipipay.com/v1
 
 ## Types
 
