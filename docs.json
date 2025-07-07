@@ -45,11 +45,11 @@
             ]
           },
           {
-            "group": "Buying Services",
+            "group": "Buying SKUs",
             "icon": "cart-shopping",
             "pages": [
               "api-reference/endpoint/get-skus",
-              "api-reference/endpoint/buy-service",
+              "api-reference/endpoint/buy-sku",
               "api-reference/endpoint/webhooks"
             ]
           }

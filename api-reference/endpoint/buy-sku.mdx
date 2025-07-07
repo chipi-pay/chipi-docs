@@ -1,6 +1,6 @@
 ---
-title: 'Buy Service'
-description: 'Purchase a service using blockchain transaction'
+title: 'Buy SKU'
+description: 'Purchase a SKU using blockchain transaction'
 openapi: 'POST /sku-transactions'
 ---
 
@@ -15,8 +15,8 @@ curl -X POST "https://api.chipipay.com/v1/sku-transactions" \
   -d '{
     "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
     "skuId": "sku-tl-TEL010",
-    "chainId": "STARKNET",
-    "chainToken": "USDC",
+    "chainId": "BASE",
+    "chainToken": "ETH",
     "mxnAmount": 10,
     "reference": "7773271789",
     "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
@@ -33,8 +33,8 @@ const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
   body: JSON.stringify({
     walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
     skuId: "sku-tl-TEL010",
-    chainId: "STARKNET",
-    chainToken: "USDC",
+    chainId: "ARBITRUM",
+    chainToken: "ARB",
     mxnAmount: 10,
     reference: "7773271789",
     transactionHash: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
@@ -58,7 +58,7 @@ headers = {
 data = {
     "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
     "skuId": "sku-tl-TEL010",
-    "chainId": "STARKNET",
+    "chainId": "OPTIMISM",
     "chainToken": "USDC",
     "mxnAmount": 10,
     "reference": "7773271789",
@@ -85,8 +85,8 @@ print(transaction)
   "reference": "7773271789",
   "fileNumber": null,
   "status": "pending",
-  "chainId": "STARKNET",
-  "chainToken": "USDC",
+  "chainId": "BASE",
+  "chainToken": "ETH",
   "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
   "errorMessage": null,
   "createdAt": "2024-01-15T10:30:00Z",
@@ -162,11 +162,11 @@ POST /sku-transactions
 </ParamField>
 
 <ParamField body="chainId" type="string" required>
-  The blockchain network ID. Currently only "STARKNET" is supported
+  The blockchain network ID. Supported values: "STARKNET", "BASE", "ARBITRUM", "OPTIMISM", "ROOTSTOCK", "SCROLL"
 </ParamField>
 
 <ParamField body="chainToken" type="string" required>
-  The token used for payment. Currently only "USDC" is supported
+  The token used for payment. Supported values: "USDC", "ETH", "STRK", "SLINK", "ALF", "BROTHER", "ARB", "DOC"
 </ParamField>
 
 <ParamField body="mxnAmount" type="number" required>
@@ -295,4 +295,26 @@ Before calling this endpoint, you must process the payment using the Chipi Pay s
 - **Starknet Contract**: [GitHub Repository](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol)
 - **EVM Contract**: [GitHub Repository](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol)
 
-The transaction hash from the smart contract payment is required to complete the service purchase. 
+The transaction hash from the smart contract payment is required to complete the service purchase.
+
+## Supported Chains and Tokens
+
+**Chains:**
+
+- STARKNET
+- BASE
+- ARBITRUM
+- OPTIMISM
+- ROOTSTOCK
+- SCROLL
+
+**Tokens:**
+
+- USDC
+- ETH
+- STRK
+- SLINK
+- ALF
+- BROTHER
+- ARB
+- DOC 

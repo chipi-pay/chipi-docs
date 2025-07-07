@@ -248,12 +248,12 @@
           },
           "chainId": {
             "type": "string",
-            "enum": ["STARKNET"],
+            "enum": ["STARKNET", "BASE", "ARBITRUM", "OPTIMISM", "ROOTSTOCK", "SCROLL"],
             "description": "The blockchain network ID"
           },
           "chainToken": {
             "type": "string",
-            "enum": ["USDC"],
+            "enum": ["USDC", "ETH", "STRK", "SLINK", "ALF", "BROTHER", "ARB", "DOC"],
             "description": "The token used for payment"
           },
           "mxnAmount": {
@@ -313,12 +313,12 @@
           },
           "chainId": {
             "type": "string",
-            "enum": ["STARKNET"],
+            "enum": ["STARKNET", "BASE", "ARBITRUM", "OPTIMISM", "ROOTSTOCK", "SCROLL"],
             "description": "The blockchain network used"
           },
           "chainToken": {
             "type": "string",
-            "enum": ["USDC"],
+            "enum": ["USDC", "ETH", "STRK", "SLINK", "ALF", "BROTHER", "ARB", "DOC"],
             "description": "The token used for payment"
           },
           "transactionHash": {
