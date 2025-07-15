@@ -15,7 +15,7 @@ curl -X POST "https://api.chipipay.com/v1/sku-transactions" \
   -d '{
     "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
     "skuId": "sku-tl-TEL010",
-    "chainId": "BASE",
+    "chain": "BASE",
     "chainToken": "ETH",
     "mxnAmount": 10,
     "reference": "7773271789",
@@ -33,7 +33,7 @@ const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
   body: JSON.stringify({
     walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
     skuId: "sku-tl-TEL010",
-    chainId: "ARBITRUM",
+    chain: "ARBITRUM",
     chainToken: "ARB",
     mxnAmount: 10,
     reference: "7773271789",
@@ -58,7 +58,7 @@ headers = {
 data = {
     "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
     "skuId": "sku-tl-TEL010",
-    "chainId": "OPTIMISM",
+    "chain": "OPTIMISM",
     "chainToken": "USDC",
     "mxnAmount": 10,
     "reference": "7773271789",
@@ -85,7 +85,7 @@ print(transaction)
   "reference": "7773271789",
   "fileNumber": null,
   "status": "pending",
-  "chainId": "BASE",
+  "chain": "BASE",
   "chainToken": "ETH",
   "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
   "errorMessage": null,
@@ -161,7 +161,7 @@ POST /sku-transactions
   The SKU ID of the service you want to purchase (obtained from GET /skus)
 </ParamField>
 
-<ParamField body="chainId" type="string" required>
+<ParamField body="chain" type="string" required>
   The blockchain network ID. Supported values: "STARKNET", "BASE", "ARBITRUM", "OPTIMISM", "ROOTSTOCK", "SCROLL"
 </ParamField>
 
@@ -219,7 +219,7 @@ POST /sku-transactions
   Current status of the transaction ("pending", "processing", "completed", "failed")
 </ParamField>
 
-<ParamField body="chainId" type="string">
+<ParamField body="chain" type="string">
   The blockchain network used
 </ParamField>
 
