@@ -3,8 +3,6 @@ title: Quickstart - Gasless
 description: Quickstart guide for sponsored transactions with Chipi Pay Sdk
 ---
 
-
-
 # Setup Process
 
 ## 1. Setup the Gasless in the Dashboard
@@ -29,8 +27,8 @@ You won't need the Secret Key (`sk_prod_xxxx`) for the SDK.
 As all requests are validated by the JWKS Endpoint using your auth provider.
 
 <Tip>
-  You can also refer to one of our sample apps if you want to
-  clone a full application rather than embed into an existing one!
+  You can also refer to one of our sample apps if you want to clone a full
+  application rather than embed into an existing one!
 </Tip>
 
 ## 2. Setup the Chipi SDK in your project to use the Gasless
@@ -57,13 +55,14 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
 
     import { ChipiProvider } from '@chipi-pay/chipi-sdk'
 
-    const apiPublicKey = process.env.NEXT_PUBLIC_CHIPI_API_KEY!;
-
     export function Providers({ children }: { children: React.ReactNode }) {
       return (
-        <ChipiProvider
-           config={{ apiPublicKey }}
-        >
+       <ChipiProvider
+        config={{
+          apiPublicKey: process.env.NEXT_PUBLIC_CHIPI_API_KEY!,
+          secretKey: process.env.NEXT_PUBLIC_CHIPI_SECRET_KEY!,
+        }}
+      >
           {children}
         </ChipiProvider>
       )
@@ -88,6 +87,7 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
       )
     }
     ```
+
   </Tab>
 
   <Tab title="React">
@@ -110,13 +110,17 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
     function App() {
       return (
         <ChipiProvider
-          apiKey={process.env.REACT_APP_CHIPI_API_KEY}
+          config={{
+            apiPublicKey: process.env.REACT_APP_CHIPI_API_KEY,
+            secretKey: process.env.REACT_APP_CHIPI_SECRET_KEY,
+          }}
         >
           <YourApp />
         </ChipiProvider>
       )
     }
     ```
+
   </Tab>
 
   <Tab title="Expo">
@@ -135,13 +139,16 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
     export default function App() {
       return (
         <ChipiProvider
-          apiKey={process.env.EXPO_PUBLIC_CHIPI_API_KEY}
+          config={{
+            apiPublicKey: process.env.EXPO_PUBLIC_CHIPI_API_KEY,
+          }}
         >
           <YourApp />
         </ChipiProvider>
       )
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -149,16 +156,16 @@ As all requests are validated by the JWKS Endpoint using your auth provider.
 
 That's it! You should now have an initial working version of Chipi Pay integrated into your application. You can now start implementing various features like:
 
-* [Authentication Methods](/authentication-methods)
-* [Custom UI Components](/ui-components)
-* [API Integration](/api-reference)
+- [Authentication Methods](/authentication-methods)
+- [Custom UI Components](/ui-components)
+- [API Integration](/api-reference)
 
 <Tip>
-  To quickly test the integration, you can use our [Test Mode](/test-mode) in development.
+  To quickly test the integration, you can use our [Test Mode](/test-mode) in
+  development.
 </Tip>
 
 Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) to ask us anything on your mind.
-
 
 ## API Reference
 
