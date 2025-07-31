@@ -99,7 +99,7 @@ export default function RootLayout({
 // app/actions.ts
 "use server";
 
-import { auth } from "@clerk/nextjs";
+import { auth, clerkClient } from "@clerk/nextjs";
 
 export async function saveWallet(walletData: any) {
   const { userId } = auth();
@@ -111,9 +111,105 @@ export async function saveWallet(walletData: any) {
   // Save wallet to Clerk's public metadata
   await clerkClient.users.updateUser(userId, {
     publicMetadata: {
-      wallet: walletData
+      wallet: JSON.stringify(walletData)
     }
   });
+}
+
+export async function getWallet() {
+  const { userId } = auth();
+  
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  const user = await clerkClient.users.getUser(userId);
+  const walletData = user.publicMetadata.wallet;
+  
+  if (!walletData) {
+    return null;
+  }
+
+  return JSON.parse(walletData as string);
+}
+```
+
+2. Create a wallet creation component:
+
+```typescript
+// app/components/CreateWallet.tsx
+"use client";
+
+import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useCreateWallet } from "@chipi-pay/chipi-sdk";
+import { saveWallet } from "../actions";
+
+export default function CreateWallet() {
+  const { user } = useUser();
+  const { createWalletAsync } = useCreateWallet();
+  const [encryptKey, setEncryptKey] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleCreateWallet = async () => {
+    if (!encryptKey) {
+      setError("Please enter an encryption key");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      setError("");
+      setSuccess("");
+
+      const response = await createWalletAsync({
+        encryptKey: encryptKey,
+        bearerToken: await user?.getToken({ template: "chipi-sdk" }),
+      });
+
+      console.log('createWalletResponse', response);
+      
+      // Save wallet to Clerk's public metadata
+      await saveWallet(response.wallet);
+      
+      setSuccess("Wallet created successfully!");
+      setEncryptKey("");
+    } catch (error) {
+      setError(error.message || "Failed to create wallet");
+      console.error("Error creating wallet:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4 p-4 border rounded-lg">
+      <h2 className="text-xl font-semibold">Create Wallet</h2>
+      
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      {success && <div className="text-green-500 text-sm">{success}</div>}
+      
+      <div className="space-y-2">
+        <input
+          type="password"
+          placeholder="Enter encryption key"
+          value={encryptKey}
+          onChange={(e) => setEncryptKey(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        
+        <button
+          onClick={handleCreateWallet}
+          disabled={isProcessing || !encryptKey}
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 w-full"
+        >
+          {isProcessing ? "Creating..." : "Create Wallet"}
+        </button>
+      </div>
+    </div>
+  );
 }
 ```
 
@@ -122,54 +218,35 @@ export async function saveWallet(walletData: any) {
 Here's an example of implementing a transfer flow with Clerk authentication:
 
 ```typescript
-// app/page.tsx
+// app/components/Transfer.tsx
 "use client";
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import {
-  useApprove,
-  useStake,
-  useCreateWallet,
-  useTransfer,
-  useWithdraw,
-  useCallAnyContract,
-} from "@chipi-pay/chipi-sdk";
-import { saveWallet } from "./actions";
+import { useTransfer } from "@chipi-pay/chipi-sdk";
 
-export default function Home() {
+const USDC_CONTRACT = "0xA0b86a33E6441b8c4C8C8C8C8C8C8C8C8C8C8C8C"; // Replace with actual USDC contract
+
+export default function Transfer() {
   const { user } = useUser();
-  const { createWalletAsync, createWalletResponse } = useCreateWallet();
   const { transferAsync } = useTransfer();
   const [amount, setAmount] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
+  const [encryptKey, setEncryptKey] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleCreateWallet = async (encryptKey: string) => {
-    try {
-      setIsProcessing(true);
-      setError("");
-
-      const response = await createWalletAsync(encryptKey);
-      console.log("creation response", response);
-      
-      // Save wallet to Clerk's public metadata
-      await saveWallet(response);
-      
-      alert("Wallet created");
-    } catch (error) {
-      setError(error.message || "Failed to create wallet");
-      alert("Error creating wallet: " + error.message);
-    } finally {
-      setIsProcessing(false);
+  const handleTransfer = async () => {
+    if (!amount || !recipientAddress || !encryptKey) {
+      setError("Please fill in all fields");
+      return;
     }
-  };
 
-  const handleSend = async (pin: string) => {
     try {
       setIsProcessing(true);
       setError("");
+      setSuccess("");
 
       // Get stored wallet from Clerk's public metadata
       const storedWallet = user?.publicMetadata?.wallet;
@@ -186,9 +263,9 @@ export default function Home() {
       }
 
       const transferResponse = await transferAsync({
-        encryptKey: pin,
+        encryptKey: encryptKey,
         bearerToken: token,
-        wallet: JSON.parse(storedWallet),
+        wallet: JSON.parse(storedWallet as string),
         contractAddress: USDC_CONTRACT,
         recipient: recipientAddress,
         amount: amount,
@@ -196,59 +273,95 @@ export default function Home() {
       });
 
       console.log("transfer response", transferResponse);
-      alert("Transferred successfully");
+      setSuccess("Transfer completed successfully!");
       
       // Clear form
       setAmount("");
       setRecipientAddress("");
+      setEncryptKey("");
     } catch (error) {
       setError(error.message || "Transfer failed");
-      alert("Error: " + error.message);
+      console.error("Transfer error:", error);
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="p-5">
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+    <div className="space-y-4 p-4 border rounded-lg">
+      <h2 className="text-xl font-semibold">Transfer USDC</h2>
       
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Chipi SDK</h1>
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      {success && <div className="text-green-500 text-sm">{success}</div>}
+      
+      <div className="space-y-2">
+        <input
+          type="text"
+          placeholder="Recipient Address"
+          value={recipientAddress}
+          onChange={(e) => setRecipientAddress(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        
+        <input
+          type="password"
+          placeholder="Encryption Key"
+          value={encryptKey}
+          onChange={(e) => setEncryptKey(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
         
         <button
-          onClick={() => handleCreateWallet("01234")}
-          disabled={isProcessing}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+          onClick={handleTransfer}
+          disabled={isProcessing || !amount || !recipientAddress || !encryptKey}
+          className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50 w-full"
         >
-          {isProcessing ? "Processing..." : "Create Wallet"}
+          {isProcessing ? "Processing..." : "Make Transfer"}
         </button>
+      </div>
+    </div>
+  );
+}
+```
 
-        <div className="space-y-2">
-          <input
-            type="text"
-            placeholder="Recipient Address"
-            value={recipientAddress}
-            onChange={(e) => setRecipientAddress(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          
-          <input
-            type="number"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-          
-          <button
-            onClick={() => handleSend("01234")}
-            disabled={isProcessing || !amount || !recipientAddress}
-            className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50 w-full"
-          >
-            {isProcessing ? "Processing..." : "Make Transfer"}
-          </button>
-        </div>
+## Main Page Implementation
+
+```typescript
+// app/page.tsx
+"use client";
+
+import { useUser } from "@clerk/nextjs";
+import CreateWallet from "./components/CreateWallet";
+import Transfer from "./components/Transfer";
+
+export default function Home() {
+  const { user, isSignedIn } = useUser();
+
+  if (!isSignedIn) {
+    return (
+      <div className="p-5">
+        <h1 className="text-2xl font-bold mb-4">Chipi Pay Demo</h1>
+        <p>Please sign in to continue.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-5 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Chipi Pay Demo</h1>
+      <p className="mb-4">Welcome, {user?.firstName}!</p>
+      
+      <div className="space-y-6">
+        <CreateWallet />
+        <Transfer />
       </div>
     </div>
   );
@@ -259,6 +372,8 @@ export default function Home() {
 
 - Add error handling and loading states
 - Customize the UI to match your app's design
+- Implement additional features like wallet balance checking
+- Add proper validation for addresses and amounts
 
 <Tip>
   Need help? Check out our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) for
