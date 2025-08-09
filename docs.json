@@ -15,12 +15,18 @@
         "icon": "book-open",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Welcome",
             "icon": "rocket",
             "pages": [
-              "introduction/welcome",
+              "introduction/welcome"
+            ]
+          },
+          {
+            "group": "Quickstarts",
+            "icon": "lightbulb",
+            "pages": [
               "gasless/quickstart",
-              "services/quickstart"
+             "services/quickstart"
             ]
           },
           {
@@ -29,6 +35,13 @@
             "pages": [
               "gasless/tutorials/expo",
               "gasless/tutorials/nextjs"
+            ]
+          },
+          {
+            "group": "Pay with Crypto Button",
+            "icon": "credit-card",
+            "pages": [
+              "merchant/quickstart"
             ]
           }
         ]

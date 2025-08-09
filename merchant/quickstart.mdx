@@ -1,0 +1,276 @@
+---
+title: Set up
+description: Add a crypto payment button to your website in minutes
+---
+
+
+## 1. Configure payment notifications
+
+Choose how you want to be notified when payments are received.
+
+### Option A: Webhooks (Recommended)
+
+Configure a webhook to receive real-time updates on payment status. This is ideal for automated systems and immediate order fulfillment.
+
+1. Go to your [Webhook Configuration](https://dashboard.chipipay.com/configure/webhooks) page
+2. Add your endpoint URL
+3. Select the events you want to receive
+4. Save your configuration
+
+### Option B: Email notifications
+
+Set up email notifications for manual order processing and simple setups.
+
+1. Visit the [Notification Settings](https://dashboard.chipipay.com/configure/notifications) page
+2. Enter your email address
+4. Save your settings
+
+## 2. Get your merchant wallet address
+
+Your merchant wallet address is where all payments will be sent.
+
+1. Navigate to the [Merchant Configuration](https://dashboard.chipipay.com/merchant/configure) page in your dashboard
+2. Copy your Merchant Wallet Address:
+
+```bash
+0x1234567890123456789012345678901234567890
+```
+
+<Warning>
+Keep your wallet address secure and only share it through your payment button implementation.
+</Warning>
+
+## 3. Add the payment button to your website
+
+Choose your preferred implementation method:
+
+<Tabs>
+  <Tab title="Next.js">
+    Perfect for Next.js applications.
+
+```typescript
+import Link from 'next/link'
+
+export function PayCryptoButton({ usdAmount }: { usdAmount: number }) {
+  const merchantWallet = "0x15c12db2334063aefae3b348487aba02d159471b3294065a8f5879dd9e73e24";
+
+  return (
+    <Link
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block w-fit transform rounded-xl border-2 border-black bg-white px-6 py-3 text-center text-lg font-semibold text-black shadow-[4px_4px_0px_rgba(251,146,60,1)] transition-all duration-200 ease-in-out hover:-translate-y-1 hover:shadow-[6px_6px_0px_rgba(251,146,60,1)]"
+      href={`https://pay.chipipay.com?starknetWallet=${merchantWallet}&usdAmount=${usdAmount}`}
+    >
+      💰 Pay with Crypto
+    </Link>
+  );
+}
+```
+
+    <Tip>
+      The `usdAmount` parameter is optional. If you don't include it, customers can choose how much they want to pay, making it perfect for donations or flexible pricing.
+    </Tip>
+  </Tab>
+
+  <Tab title="HTML/No Code">
+    Perfect for static websites, Webflow, Wix, WordPress, or any no-code platform.
+
+    ### Basic button (customer chooses amount):
+```html
+<a
+  href="https://pay.chipipay.com?starknetWallet=0x15c12db2334063aefae3b348487aba02d159471b3294065a8f5879dd9e73e24"
+  target="_blank"
+      rel="noopener noreferrer"
+  style="
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    background: #fff;
+    border: 2px solid #222;
+    border-radius: 12px;
+    box-shadow: 4px 4px 0px rgba(251,146,60,1);
+    text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+  "
+      onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='6px 6px 0px rgba(251,146,60,1)'"
+      onmouseout="this.style.transform='none'; this.style.boxShadow='4px 4px 0px rgba(251,146,60,1)'"
+>
+      💰 Pay with Crypto
+</a>
+```
+  </Tab>
+</Tabs>
+
+## 4. Test your integration
+
+<Warning>
+Currently, ChipiPay only supports **USDC payments on the Starknet network**. Make sure your users have USDC tokens in their Starknet wallet.
+</Warning>
+
+1. Click your newly added payment button
+2. You'll be redirected to [pay.chipipay.com](https://pay.chipipay.com)
+3. Complete a transaction using USDC on Starknet
+4. Verify you receive the payment notification (webhook or email)
+
+
+
+## 5. Handle webhook notifications
+
+When a payment is successful, you'll receive a webhook notification with the transaction details.
+
+### Webhook payload schema
+
+<ParamField path="event" type="string" required>
+  The event type. Currently only `"transaction.sent"` is supported.
+</ParamField>
+
+<ParamField path="data" type="object" required>
+  Container object for the transaction data.
+  
+  <Expandable title="data properties">
+    <ParamField path="transaction" type="object" required>
+      The transaction details.
+      
+      <Expandable title="transaction properties">
+        <ParamField path="id" type="string" required>
+          Unique transaction identifier (e.g., `"transaction-1ad902fe-fb48-434f-af9c-c23c170b47b4"`)
+        </ParamField>
+        
+        <ParamField path="chain" type="string" required>
+          The blockchain network. Always `"STARKNET"` for ChipiPay.
+        </ParamField>
+        
+        <ParamField path="apiPublicKey" type="string" required>
+          Your ChipiPay API public key (e.g., `"pk_prod_7726eff1cf6ce2e0291fa61e0c08b8c2"`)
+        </ParamField>
+        
+        <ParamField path="transactionHash" type="string" required>
+          The Starknet transaction hash for verification on-chain
+        </ParamField>
+        
+        <ParamField path="blockNumber" type="number" required>
+          Block number where the transaction was included. `-1` if pending.
+        </ParamField>
+        
+        <ParamField path="senderAddress" type="string" required>
+          The wallet address that sent the payment
+        </ParamField>
+        
+        <ParamField path="destinationAddress" type="string" required>
+          Your merchant wallet address that received the payment
+        </ParamField>
+        
+        <ParamField path="amount" type="string" required>
+          Payment amount in the smallest token unit (e.g., `"100000"` = 0.1 USDC)
+        </ParamField>
+        
+        <ParamField path="token" type="string" required>
+          Token type. Currently always `"USDC"`.
+        </ParamField>
+        
+        <ParamField path="calledFunction" type="string">
+          The contract function called. Usually `"send"`.
+        </ParamField>
+        
+        <ParamField path="amountInUSD" type="number" required>
+          USD equivalent of the payment amount
+        </ParamField>
+        
+        <ParamField path="status" type="string" required>
+          Transaction status. `"SUCCESS"` indicates a completed payment.
+        </ParamField>
+        
+        <ParamField path="isChipiWallet" type="boolean" required>
+          Whether the sender used a ChipiPay managed wallet
+        </ParamField>
+        
+        <ParamField path="createdAt" type="string" required>
+          ISO timestamp when the transaction was first detected
+        </ParamField>
+        
+        <ParamField path="updatedAt" type="string" required>
+          ISO timestamp when the transaction was last updated
+        </ParamField>
+        
+        <ParamField path="senderWalletId" type="string | null">
+          ChipiPay wallet ID if sender used a managed wallet
+        </ParamField>
+        
+        <ParamField path="destinationWalletId" type="string | null">
+          ChipiPay wallet ID if destination is a managed wallet
+        </ParamField>
+        
+        <ParamField path="chipiWalletId" type="string | null">
+          Legacy field for ChipiPay wallet identification
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Webhook signature verification
+
+<Warning>
+For security, all webhooks include an HMAC signature in the `chipi-signature` header. You should verify this signature to ensure the webhook is from ChipiPay.
+</Warning>
+
+
+
+1. Get your webhook signing secret from your [webhook configuration](https://dashboard.chipipay.com/configure/webhooks) page (it looks like `whsec_****`)
+2. Create a webhook handler in your Next.js app:
+
+```typescript
+// app/api/webhooks/route.ts
+import { createHmac, timingSafeEqual } from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
+
+function verifyWebhookSignature(
+  payload: string,
+  receivedSignature: string,
+  secretKey: string
+): boolean {
+  try {
+    const expectedSignature = createHmac("sha256", secretKey)
+      .update(payload)
+      .digest("hex");
+
+    // Use timing-safe comparison to prevent timing attacks
+    return timingSafeEqual(
+      Buffer.from(expectedSignature, "hex"),
+      Buffer.from(receivedSignature, "hex")
+    );
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const payload = await request.text();
+  const signature = request.headers.get('chipi-signature');
+  const webhookSecret = process.env.CHIPI_WEBHOOK_SECRET!; // Your whsec_**** key
+
+  if (!signature || !verifyWebhookSignature(payload, signature, webhookSecret)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+
+  const event = JSON.parse(payload);
+
+  if (event.event === 'transaction.sent' && event.data.transaction.status === 'SUCCESS') {
+    // Handle successful payment
+    const transaction = event.data.transaction;
+    
+    // Update your database, send confirmation emails, fulfill orders, etc.
+    console.log(`Payment received: ${transaction.amount} USDC from ${transaction.senderAddress}`);
+  }
+
+  return NextResponse.json({ received: true });
+}
+```
+
+
+## 6. Celebrate
+
+Your integration is now ready for production!
