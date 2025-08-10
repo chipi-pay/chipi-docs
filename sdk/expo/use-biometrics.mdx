@@ -1,0 +1,167 @@
+---
+title: 'Use Biometrics as a PIN'
+description: 'Learn how to implement biometric authentication as a PIN alternative in your Expo app'
+---
+
+# Use Biometrics as a PIN
+
+This guide will show you how to implement biometric authentication as an alternative to traditional PIN entry in your Expo app using the Chipi SDK.
+
+## Overview
+
+Biometric authentication provides a secure and convenient way for users to authenticate without remembering PINs or passwords. The Chipi SDK supports fingerprint and face recognition on compatible devices.
+
+## Prerequisites
+
+- Expo SDK 49 or later
+- Chipi SDK installed and configured
+- Device with biometric capabilities (fingerprint sensor or face recognition)
+
+## Installation
+
+First, install the required dependencies:
+
+```bash
+npx expo install expo-local-authentication
+```
+
+## Basic Implementation
+
+Here's a simple example of how to implement biometric authentication:
+
+```typescript
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { useCreateWallet } from '@chipi/sdk';
+
+export default function BiometricAuth() {
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const { createWallet, isPending } = useCreateWallet();
+
+  useEffect(() => {
+    checkBiometricSupport();
+  }, []);
+
+  const checkBiometricSupport = async () => {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    setIsBiometricSupported(hasHardware && isEnrolled);
+  };
+
+  const authenticateWithBiometrics = async () => {
+    try {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Authenticate to access your wallet',
+        fallbackLabel: 'Use PIN instead',
+      });
+
+      if (result.success) {
+        // Biometric authentication successful
+        await createWallet();
+        Alert.alert('Success', 'Wallet created successfully!');
+      } else {
+        Alert.alert('Authentication Failed', 'Please try again');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Biometric authentication failed');
+    }
+  };
+
+  if (!isBiometricSupported) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Biometric authentication is not available on this device</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <TouchableOpacity
+        onPress={authenticateWithBiometrics}
+        disabled={isPending}
+        style={{
+          backgroundColor: '#0ab785',
+          padding: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: 'white', fontSize: 16 }}>
+          {isPending ? 'Creating Wallet...' : 'Authenticate with Biometrics'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+```
+
+## Advanced Configuration
+
+### Customize Authentication Options
+
+You can customize the biometric authentication experience:
+
+```typescript
+const authenticateWithBiometrics = async () => {
+  const result = await LocalAuthentication.authenticateAsync({
+    promptMessage: 'Verify your identity',
+    fallbackLabel: 'Use PIN',
+    cancelLabel: 'Cancel',
+    disableDeviceFallback: false,
+    requireAuthentication: true,
+  });
+};
+```
+
+### Handle Different Biometric Types
+
+```typescript
+const getBiometricType = async () => {
+  const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
+  
+  if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+    return 'fingerprint';
+  } else if (types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+    return 'face';
+  } else if (types.includes(LocalAuthentication.AuthenticationType.IRIS)) {
+    return 'iris';
+  }
+  
+  return 'none';
+};
+```
+
+## Security Considerations
+
+- Always check if biometric authentication is available before prompting
+- Provide fallback authentication methods (PIN, password)
+- Handle authentication failures gracefully
+- Consider implementing rate limiting for failed attempts
+- Store sensitive data securely using Expo SecureStore
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Biometric not working**: Ensure the device has biometric hardware and it's properly configured
+2. **Authentication always fails**: Check if biometric data is enrolled on the device
+3. **App crashes**: Verify you're using the latest version of expo-local-authentication
+
+### Testing
+
+- Test on both iOS and Android devices
+- Test with different biometric types
+- Test fallback scenarios
+- Test on devices without biometric support
+
+## Next Steps
+
+Now that you have biometric authentication working, you can:
+
+- Integrate it with other Chipi SDK features
+- Add biometric authentication to wallet operations
+- Implement multi-factor authentication combining biometrics and PINs
+- Add biometric authentication to transaction signing
+
+For more information, check out the [Expo Local Authentication documentation](https://docs.expo.dev/versions/latest/sdk/local-authentication/). 

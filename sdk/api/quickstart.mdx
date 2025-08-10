@@ -1,0 +1,147 @@
+---
+title: 'API Quickstart'
+description: 'Get started with the Chipi API - learn how to authenticate, make requests, and handle responses'
+---
+
+# API Quickstart
+
+Welcome to the Chipi API! This guide will help you get started with integrating our services into your application.
+
+## Overview
+
+The Chipi API provides programmatic access to our payment and wallet services. You can use it to:
+
+- Create and manage wallets
+- Process payments and transactions
+- Handle webhooks for real-time updates
+- Manage SKUs and products
+- Integrate with various blockchain networks
+
+## Authentication
+
+All API requests require authentication using your API key. Include it in the `Authorization` header:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Getting Your API Key
+
+1. Sign up for a Chipi account at [dashboard.chipipay.com](https://dashboard.chipipay.com)
+2. Navigate to the API section
+3. Generate a new API key
+4. Keep your API key secure and never expose it in client-side code
+
+## Base URL
+
+```
+https://api.chipipay.com/v1
+```
+
+## Making Your First Request
+
+Let's start with a simple example - getting available SKUs:
+
+```bash
+curl -X GET "https://api.chipipay.com/v1/skus" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+## Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data here
+  },
+  "message": "Operation completed successfully"
+}
+```
+
+## Error Handling
+
+The API uses standard HTTP status codes and provides detailed error messages:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_API_KEY",
+    "message": "The provided API key is invalid or expired"
+  }
+}
+```
+
+## Rate Limiting
+
+- **Free tier**: 100 requests per minute
+- **Pro tier**: 1000 requests per minute
+- **Enterprise**: Custom limits
+
+Rate limit headers are included in responses:
+- `X-RateLimit-Limit`: Maximum requests per window
+- `X-RateLimit-Remaining`: Remaining requests in current window
+- `X-RateLimit-Reset`: Time when the rate limit resets
+
+## SDKs and Libraries
+
+We provide official SDKs for popular platforms:
+
+### JavaScript/TypeScript
+```bash
+npm install @chipi/sdk
+```
+
+### React Hooks
+```bash
+npm install @chipi/react
+```
+
+### Python
+```bash
+pip install chipi-sdk
+```
+
+## Webhooks
+
+Set up webhooks to receive real-time updates about events:
+
+```json
+{
+  "url": "https://your-domain.com/webhooks",
+  "events": ["payment.completed", "wallet.created"],
+  "secret": "your_webhook_secret"
+}
+```
+
+## Testing
+
+Use our sandbox environment for testing:
+
+```
+https://sandbox-api.chipipay.com/v1
+```
+
+Sandbox API keys are clearly marked and won't process real transactions.
+
+## Next Steps
+
+Now that you have the basics, explore these areas:
+
+- [SKU Management](/sdk/api/endpoint/get-skus) - Learn how to manage products
+- [Payment Processing](/sdk/api/endpoint/buy-sku) - Process payments and transactions
+- [Webhook Setup](/sdk/api/endpoint/webhooks) - Configure real-time notifications
+- [React Hooks](/sdk/api/hooks/use-create-wallet) - Use our React hooks for easy integration
+
+## Support
+
+Need help? We're here to assist:
+
+- **Documentation**: Browse our comprehensive guides
+- **Community**: Join our [Telegram group](https://t.me/+e2qjHEOwImkyZDVh)
+- **Email**: support@chipipay.com
+- **Dashboard**: [dashboard.chipipay.com](https://dashboard.chipipay.com) 

@@ -9,79 +9,126 @@
   },
   "favicon": "/favicon.ico",
   "navigation": {
-    "tabs": [
+    "dropdowns": [
       {
-        "tab": "Documentation",
-        "icon": "book-open",
+        "dropdown": "NextJS",
+        "icon": "/images/icons/nextjs-icon.svg",
         "groups": [
           {
-            "group": "Welcome",
+            "group": "Getting Started",
             "icon": "rocket",
             "pages": [
-              "introduction/welcome"
+              "sdk/nextjs/introduction"
             ]
           },
           {
-            "group": "Quickstarts",
-            "icon": "lightbulb",
-            "pages": [
-              "gasless/quickstart",
-             "services/quickstart"
-            ]
-          },
-          {
-            "group": "Gasless Tutorials",
+            "group": "Gasless",
             "icon": "gas-pump",
             "pages": [
-              "gasless/tutorials/expo",
-              "gasless/tutorials/nextjs"
+              "sdk/nextjs/gasless",
+              "sdk/nextjs/gasless-tutorial"
             ]
           },
           {
-            "group": "Pay with Crypto Button",
+            "group": "Buying Services",
+            "icon": "cart-shopping",
+            "pages": [
+              "sdk/nextjs/buying-services"
+            ]
+          },
+          {
+            "group": "Pay With Crypto",
             "icon": "credit-card",
             "pages": [
-              "merchant/quickstart"
+              "sdk/nextjs/pay-with-crypto"
+            ]
+          },
+          {
+            "group": "Hooks",
+           "icon": "fish",
+            "pages": [
+              "sdk/api/hooks/use-create-wallet",
+              "sdk/api/hooks/use-approve",
+              "sdk/api/hooks/use-stake-vesu-usdc",
+              "sdk/api/hooks/use-withdraw-vesu-usdc",
+              "sdk/api/hooks/use-transfer",
+              "sdk/api/hooks/use-call-any-contract"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "dropdown": "Expo",
+        "icon": "/images/icons/expo-logo.png",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "sdk/expo/introduction"
+            ]
+          },
+          {
+            "group": "Expo Guides",
+            "icon": "book-open",
+            "pages": [
+              "sdk/expo/use-biometrics"
+            ]
+          },
+          {
+            "group": "Gasless",
+            "icon": "gas-pump",
+            "pages": [
+              "sdk/expo/gasless",
+              "sdk/expo/gasless-tutorial"
+            ]
+          },
+         
+          {
+            "group": "Hooks",
+            "icon": "fish",
+            "pages": [
+              "sdk/api/hooks/use-create-wallet",
+              "sdk/api/hooks/use-approve",
+              "sdk/api/hooks/use-stake-vesu-usdc",
+              "sdk/api/hooks/use-withdraw-vesu-usdc",
+              "sdk/api/hooks/use-transfer",
+              "sdk/api/hooks/use-call-any-contract"
+            ]
+          }
+        ]
+      },
+      {
+        "dropdown": "API Reference",
         "icon": "code",
         "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "sdk/api/quickstart"
+            ]
+          },
           {
             "group": "API Documentation",
             "icon": "file-code",
             "pages": [
-              "api-reference/introduction"
+              "sdk/api/introduction"
             ]
           },
           {
-            "group": "Buying SKUs",
+            "group": "SKUs",
+            "collapsed": true,
             "icon": "cart-shopping",
             "pages": [
-              "api-reference/endpoint/get-skus",
-              "api-reference/endpoint/buy-sku",
-              "api-reference/endpoint/webhooks"
+              "sdk/api/endpoint/get-skus"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "React Hooks",
-        "icon": "code",
-        "groups": [
+          },
           {
-            "group": "Gasless Hooks",
-            "icon": "gas-pump",
+            "group": "SKU Transactions",
+            "icon": "receipt",
             "pages": [
-              "api-reference/hooks/use-create-wallet",
-              "api-reference/hooks/use-approve",
-              "api-reference/hooks/use-stake-vesu-usdc",
-              "api-reference/hooks/use-withdraw-vesu-usdc",
-              "api-reference/hooks/use-transfer",
-              "api-reference/hooks/use-call-any-contract"
+              "sdk/api/endpoint/buy-sku"
             ]
           }
         ]
@@ -98,7 +145,6 @@
         "label": "Support",
         "href": "https://t.me/+e2qjHEOwImkyZDVh",
         "icon": "telegram"
-        
       }
     ],
     "primary": {
