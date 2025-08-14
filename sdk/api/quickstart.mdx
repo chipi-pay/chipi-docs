@@ -16,6 +16,7 @@ The Chipi API provides programmatic access to our payment and wallet services. Y
 - Handle webhooks for real-time updates
 - Manage SKUs and products
 - Integrate with various blockchain networks
+- Implement Buying services
 
 ## Authentication
 
@@ -27,10 +28,38 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Getting Your API Key
 
-1. Sign up for a Chipi account at [dashboard.chipipay.com](https://dashboard.chipipay.com)
-2. Navigate to the API section
-3. Generate a new API key
-4. Keep your API key secure and never expose it in client-side code
+To use the Chipi Pay API, you'll need to obtain your API key from the dashboard.
+
+#### Steps to Get Your API Key:
+
+1. **Visit the Dashboard**: Go to [https://dashboard.chipipay.com/](https://dashboard.chipipay.com/)
+2. **Sign Up/Login**: Create an account or log in to your existing account
+3. **Navigate Developers Section**: In your dashboard, find the tag "Configure" then Access API keys under the developers section. 
+4. **Change the environment**: Change from Production to development environment in the navbar. 
+5. **Copy Your Key**: Your API key will be displayed in the format `sk_prod_xxxx` or `sk_test_xxxx` 
+6. **Store Securely**: Save your API key in a secure location (environment variables, secure vault, etc.)
+
+<Tip>
+  Never commit your API key to version control or share it publicly. Always use environment variables or secure configuration management.
+</Tip>
+
+#### Environment Setup
+
+Set your API key as an environment variable:
+
+```bash
+# Production
+export CHIPI_API_KEY=sk_prod_xxxx
+
+# Development/Testing
+export CHIPI_API_KEY=sk_test_xxxx
+```
+
+Or in your `.env` file:
+
+```env
+CHIPI_API_KEY=sk_prod_xxxx
+```
 
 ## Base URL
 
@@ -93,7 +122,7 @@ We provide official SDKs for popular platforms:
 
 ### JavaScript/TypeScript
 ```bash
-npm install @chipi/sdk
+npm install @chipi-pay/chipi-sdk
 ```
 
 ### React Hooks

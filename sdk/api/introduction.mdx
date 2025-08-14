@@ -24,22 +24,25 @@ The Chipi Pay API provides endpoints for:
 ## Authentication
 
 All API requests require authentication using your Secret Key (`sk_prod_xxxx`). Include it in the Authorization header:
-
-```bash
-Authorization: Bearer sk_prod_xxxx
-```
-
 <Tip>
   For testing purposes, set your environment to development in the dashboard. 
   This will give you a secret key that doesn't require a valid transaction hash,
    making it easier to test the endpoints without needing to process actual transactions.
 </Tip>
-
+```bash
+Authorization: Bearer sk_prod_xxxx
+```
+For detailed instructions on obtaining your API key, see the [API Quickstart](/sdk/api/quickstart).
 
 
 ## Webhooks
 
 When you buy a service, you'll receive status updates via webhooks at the URL you configured in your dashboard. Make sure to handle these webhook notifications to track the status of your service purchases.
+#### Steps to set up your webhook
+
+1. **Access Configure Tab**
+2. **Access Webhook**: Located on the sidebar under the developers sub menu
+3. **Enter Webhook URL**: Paste your webhook URL into the "Webhook URL" field and save your changes.
 
 ## Rate Limits
 

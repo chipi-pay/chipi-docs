@@ -1,0 +1,163 @@
+---
+title: 'Buying Services'
+description: 'Learn how to integrate service purchasing capabilities using the Chipi Pay API'
+---
+
+# Buying Services
+
+The Chipi Pay API provides comprehensive functionality for integrating service purchasing capabilities into your applications. This section covers everything you need to know about buying services through our platform.
+
+## Overview
+
+Buying services through Chipi Pay involves several key components:
+
+- **Service Discovery**: Browse and retrieve available services (SKUs)
+- **Service Purchase**: Execute transactions to buy services
+- **Transaction Management**: Handle purchase confirmations and status updates
+- **Webhook Integration**: Receive real-time updates on purchase status
+
+## Key Concepts
+
+### SKUs (Stock Keeping Units)
+SKUs represent the services available for purchase. Each SKU contains:
+- Service description and details
+- Pricing information
+- Availability status
+- Service-specific parameters
+
+### Purchase Flow
+1. **Browse Services**: Use the `GET /skus` endpoint to retrieve available services
+2. **Select Service**: Choose the desired SKU from the available options
+3. **Execute Purchase**: Use the `POST /buy-sku` endpoint to complete the transaction
+4. **Monitor Status**: Track purchase status through webhooks and API responses
+
+### Example
+
+#### 1. Get Skus
+
+Typescript Example:
+```ts
+const response = await fetch("https://api.chipipay.com/v1/skus", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`
+  }
+});
+const data = await response.json();
+```
+This will return a list of SKUs that are available for purchase. 
+You will need the <code>sku_id</code> to buy a service.
+The rest of the fields are useful for displaying the service details to the user.
+
+
+### 2. Buy a Service
+
+Before calling this endpoint, you'll need to use our Smart Contract to pay for the required service. 
+
+You can find the Starknet Smart Contract [here](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol).
+
+You can find the EVM Smart Contract [here](https://github.com/chipipay/chipipay-contracts/blob/main/contracts/ChipiPay.sol).
+
+
+Once you have the transaction hash, you can call the endpoint to buy the service.
+
+Typescript Example:
+```ts
+const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer sk_prod_xxxx`
+  },
+  body: JSON.stringify({
+  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+  "skuId": "tet_100_mxn",
+  "chain": "STARKNET",
+  "chainToken": "ETH",
+  "mxnAmount": 250.00,
+  "reference": "TET_PURCHASE_20241201",
+  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+})
+});
+
+const data = await response.json();
+```
+
+Once the transaction is confirmed, you'll receive a response with the status of the transaction in your <b>webhook URL</b>.
+
+
+## Available Endpoints
+
+### Service Discovery
+- **[Get SKUs](/api-reference/endpoint/get-skus)**: Retrieve a list of all available services
+  - Filter services by category, price range, or availability
+  - Get detailed information about each service
+  - Check pricing and service parameters
+
+### Service Purchase
+- **[Buy SKU](/api-reference/endpoint/buy-sku)**: Purchase a specific service
+  - Submit purchase requests with required parameters
+  - Handle transaction confirmations
+  - Manage purchase status updates
+
+For more detailed information on how to get SKUs and buy services, see the following endpoint documentation:
+- [Get SKUs](/api/endpoint/get-skus)
+- [Buy SKU](/api/endpoint/buy-sku)
+
+
+## Authentication
+
+All buying services endpoints require proper authentication using your Secret Key. Include it in the Authorization header:
+
+```bash
+Authorization: Bearer sk_prod_xxxx
+```
+
+## Webhook Integration
+
+When you purchase a service, you'll receive real-time updates via webhooks at the URL configured in your dashboard. These webhooks provide:
+
+- Purchase confirmation
+- Transaction status updates
+- Service activation notifications
+- Error and failure notifications
+
+## Error Handling
+
+The API provides comprehensive error handling for common scenarios:
+
+- **Insufficient Balance**: When the user doesn't have enough funds
+- **Service Unavailable**: When the requested service is no longer available
+- **Invalid Parameters**: When required parameters are missing or invalid
+- **Rate Limiting**: When API usage exceeds allowed limits
+
+## Best Practices
+
+1. **Always validate SKU availability** before attempting to purchase
+2. **Implement proper error handling** for failed transactions
+3. **Use webhooks** for real-time status updates
+4. **Store transaction IDs** for future reference and support
+5. **Implement retry logic** for transient failures
+
+## Example Use Cases
+
+- **SaaS Subscriptions**: Purchase monthly or annual service subscriptions
+- **Digital Products**: Buy digital downloads, licenses, or access codes
+- **Premium Features**: Unlock advanced functionality or premium content
+- **Service Credits**: Purchase credits for API usage or service consumption
+
+## Next Steps
+
+- Review the [Get SKUs](/api-reference/endpoint/get-skus) endpoint documentation
+- Learn about the [Buy SKU](/api-reference/endpoint/buy-sku) endpoint
+- Set up webhook endpoints in your dashboard
+- Test the integration using our development environment
+
+<Tip>
+  Start with the development environment to test your integration without processing real transactions. This allows you to verify your implementation before going live.
+</Tip>
+
+## Celebrate & Learn More!
+If you need to do something more customized, we are developing a more comprehensive API.
+Stay tuned for updates!
+Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) to ask us anything on your mind.
+

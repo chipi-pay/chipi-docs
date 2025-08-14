@@ -117,17 +117,11 @@
             ]
           },
           {
-            "group": "SKUs",
-            "collapsed": true,
+            "group": "Buying Services",
             "icon": "cart-shopping",
             "pages": [
-              "sdk/api/endpoint/get-skus"
-            ]
-          },
-          {
-            "group": "SKU Transactions",
-            "icon": "receipt",
-            "pages": [
+              "sdk/api/buying-services",
+              "sdk/api/endpoint/get-skus",
               "sdk/api/endpoint/buy-sku"
             ]
           }
