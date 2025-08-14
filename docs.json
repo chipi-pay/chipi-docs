@@ -25,8 +25,8 @@
             "group": "Gasless",
             "icon": "gas-pump",
             "pages": [
-              "sdk/nextjs/gasless",
-              "sdk/nextjs/gasless-tutorial"
+              "sdk/nextjs/gasless-quickstart",
+              "sdk/nextjs/gasless-clerk-setup"
             ]
           },
           {
@@ -44,7 +44,7 @@
             ]
           },
           {
-            "group": "Hooks",
+            "group": "SDK Hooks",
            "icon": "fish",
             "pages": [
               "sdk/api/hooks/use-create-wallet",
@@ -69,23 +69,23 @@
             ]
           },
           {
+            "group": "Gasless",
+            "icon": "gas-pump",
+            "pages": [
+              "sdk/expo/gasless-quickstart",
+              "sdk/expo/gasless-clerk-setup"
+            ]
+          },
+          {
             "group": "Expo Guides",
             "icon": "book-open",
             "pages": [
               "sdk/expo/use-biometrics"
             ]
           },
-          {
-            "group": "Gasless",
-            "icon": "gas-pump",
-            "pages": [
-              "sdk/expo/gasless",
-              "sdk/expo/gasless-tutorial"
-            ]
-          },
          
           {
-            "group": "Hooks",
+            "group": "SDK Hooks",
             "icon": "fish",
             "pages": [
               "sdk/api/hooks/use-create-wallet",

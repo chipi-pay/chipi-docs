@@ -1,0 +1,143 @@
+---
+title: "Quickstart"
+description: "Quick setup guide for gasless transactions with Chipi SDK in Next.js applications"
+---
+
+<Steps>
+  <Step title="Configure your Authentication" titleSize="h2">
+
+You'll need to [add the JWKS Endpoint](https://dashboard.chipipay.com/configure/jwks-endpoint) from your Auth Provider to authenticate gasless transactions.
+
+<Tip>
+  With this JWKS Endpoint setup, you can now run secure code in your frontend
+  using a rotating JWT token.
+</Tip>
+
+### Getting your JWKS Endpoint
+
+For these common Auth Providers, you can get your JWKS Endpoint like this:
+
+<Tabs>
+  <Tab title="Clerk">
+  1. Create a new [JWT Template](https://dashboard.clerk.com/last-active?path=jwt-templates)
+
+  2. Copy your **Jwks Endpoint** and paste it into the JWKS Endpoint field in your Chipi Dashboard.
+  </Tab>
+
+  <Tab title="Firebase">
+  We have an active PR for Firebase and will be available by next week (22nd of August 2025)
+   so stay tuned!
+
+  </Tab>
+
+</Tabs>
+
+</Step>
+
+<Step title="Get your Public Key" titleSize="h2">
+
+Now go to your [Api Keys](https://dashboard.chipipay.com/configure/api-keys) and click on your project.
+
+Which will give you access to your **Public Key** (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
+
+<Info>
+ You won't need the Secret Key (`sk_prod_xxxx`) for now.
+</Info>
+
+</Step>
+
+<Step title="Install the SDK" titleSize="h2">
+
+<CodeGroup>
+
+```bash npm
+npm install @chipi/chipi-sdk
+```
+
+```bash yarn
+yarn add @chipi/chipi-sdk
+```
+
+```bash pnpm
+pnpm add @chipi/chipi-sdk
+```
+
+</CodeGroup>
+
+</Step>
+
+<Step title="Initialize the SDK" titleSize="h2">
+
+1. Add your **Public Key** to your environment variables.
+
+```bash
+NEXT_PUBLIC_CHIPI_PUBLIC_KEY=pk_prod_xxxx
+```
+
+2. Create a `Providers.tsx` file to wrap your application.
+
+```tsx
+"use client";
+
+import { ChipiProvider } from "@chipi-pay/chipi-sdk";
+
+const API_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_PUBLIC_KEY
+if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
+
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ChipiProvider
+      config={{
+        apiPublicKey: API_PUBLIC_KEY,
+      }}
+    >
+      {children}
+    </ChipiProvider>
+  );
+}
+
+```
+
+3. In your `layout.tsx`, wrap your app with the `Providers` component as shown below:
+
+```tsx
+// app/layout.tsx
+import { Providers } from "./providers";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+</Step>
+
+<Step title="Celebrate & Learn More!" titleSize="h2">
+
+That's it! You should now have an initial working version of Chipi Pay integrated into your application. You can now start implementing various features like:
+
+- Wallet Creations
+- Sending tokens
+- Signing transactions
+- and more!
+
+<Tip>
+  To quickly test the integration, you can use our [Test Mode](/test-mode) in
+  development.
+</Tip>
+
+Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) to ask us anything on your mind.
+
+</Step>
+
+</Steps>
