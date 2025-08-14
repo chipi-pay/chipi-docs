@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@chipi-pay/chipi-sdk": "^3.2.2"
+  }
+}
