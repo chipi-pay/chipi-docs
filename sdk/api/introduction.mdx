@@ -1,52 +1,51 @@
 ---
-title: 'Introduction'
-description: 'Chipi Pay API for buying services'
+title: 'Introduction to Chipi Pay API'
+description: 'Welcome to the Chipi Pay API! This API allows you to integrate service purchasing capabilities into your application.'
 ---
 
-# Chipi Pay API
-
-Welcome to the Chipi Pay API! This API allows you to integrate service purchasing capabilities into your application.
 
 ## Base URL
 
-```
+
+
+```bash 
 https://api.chipipay.com/v1
 ```
 
-## Overview
-
-The Chipi Pay API provides endpoints for:
-
-- **Getting Available Services**: Retrieve a list of services (SKUs) available for purchase
-- **Buying Services**: Process service purchases using blockchain transactions
-
-
 ## Authentication
 
-All API requests require authentication using your Secret Key (`sk_prod_xxxx`). Include it in the Authorization header:
-<Tip>
-  For testing purposes, set your environment to development in the dashboard. 
-  This will give you a secret key that doesn't require a valid transaction hash,
-   making it easier to test the endpoints without needing to process actual transactions.
-</Tip>
+All API requests require authentication using your Secret Key (`sk_prod_xxxx`). Include it in the `Authorization` header:
+
 ```bash
 Authorization: Bearer sk_prod_xxxx
 ```
 For detailed instructions on obtaining your API key, see the [API Quickstart](/sdk/api/quickstart).
 
 
-## Webhooks
 
-When you buy a service, you'll receive status updates via webhooks at the URL you configured in your dashboard. Make sure to handle these webhook notifications to track the status of your service purchases.
+## Overview
+
+The Chipi Pay API provides endpoints for:
+
+- **Getting Available Services** – Retrieve a list of services (SKUs) available for purchase.
+- **Buying Services** – Process service purchases using blockchain transactions.
+
+
+
+
+## Notifications and Webhooks
+
+When you buy a service, you'll receive status updates via webhooks or via email at the URL and email you configured in your dashboard. 
 #### Steps to set up your webhook
-
-1. **Access Configure Tab**
-2. **Access Webhook**: Located on the sidebar under the developers sub menu
-3. **Enter Webhook URL**: Paste your webhook URL into the "Webhook URL" field and save your changes.
+- For setting up Webhooks and email notifications, see the [API Quickstart](/sdk/api/quickstart).
 
 ## Rate Limits
 
-API requests are limited to 100 requests per minute per API key.
+
+<Warning>
+ API requests are limited to 100 requests per minute per API key.
+
+</Warning>
 
 ## Error Handling
 

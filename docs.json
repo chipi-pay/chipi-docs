@@ -102,18 +102,19 @@
         "dropdown": "API Reference",
         "icon": "code",
         "groups": [
-          {
-            "group": "Getting Started",
-            "icon": "rocket",
-            "pages": [
-              "sdk/api/quickstart"
-            ]
-          },
+          
           {
             "group": "API Documentation",
             "icon": "file-code",
             "pages": [
               "sdk/api/introduction"
+            ]
+          },
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "sdk/api/quickstart"
             ]
           },
           {
@@ -124,7 +125,7 @@
               "sdk/api/endpoint/get-skus",
               "sdk/api/endpoint/buy-sku"
             ]
-          }
+          }   
         ]
       }
     ]
