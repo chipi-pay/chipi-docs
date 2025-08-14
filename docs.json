@@ -102,13 +102,7 @@
         "dropdown": "API Reference",
         "icon": "code",
         "groups": [
-          {
-            "group": "Getting Started",
-            "icon": "rocket",
-            "pages": [
-              "sdk/api/quickstart"
-            ]
-          },
+          
           {
             "group": "API Documentation",
             "icon": "file-code",
@@ -117,20 +111,21 @@
             ]
           },
           {
-            "group": "SKUs",
-            "collapsed": true,
-            "icon": "cart-shopping",
+            "group": "Getting Started",
+            "icon": "rocket",
             "pages": [
-              "sdk/api/endpoint/get-skus"
+              "sdk/api/quickstart"
             ]
           },
           {
-            "group": "SKU Transactions",
-            "icon": "receipt",
+            "group": "Buying Services",
+            "icon": "cart-shopping",
             "pages": [
+              "sdk/api/buying-services",
+              "sdk/api/endpoint/get-skus",
               "sdk/api/endpoint/buy-sku"
             ]
-          }
+          }   
         ]
       }
     ]

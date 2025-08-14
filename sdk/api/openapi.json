@@ -21,7 +21,7 @@
   "paths": {
     "/skus": {
       "get": {
-        "summary": "Get SKUs",
+        "summary": "",
         "description": "Retrieve a list of available services (SKUs) for purchase",
         "parameters": [
           {
