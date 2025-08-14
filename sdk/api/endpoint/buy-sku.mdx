@@ -13,13 +13,13 @@ curl -X POST "https://api.chipipay.com/v1/sku-transactions" \
   -H "Authorization: Bearer sk_prod_xxxx" \
   -H "Content-Type: application/json" \
   -d '{
-  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-  "skuId": "tet_100_mxn",
+  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddgruheumskde",
+  "skuId": "test_10",
   "chain": "STARKNET",
   "chainToken": "ETH",
   "mxnAmount": 250.00,
   "reference": "TET_PURCHASE_20241201",
-  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890lwijeqijepqeqqaedef"
 }'
 ```
 
@@ -31,13 +31,13 @@ const response = await fetch("https://api.chipipay.com/v1/sku-transactions", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-  "skuId": "tet_100_mxn",
+  "walletAddress": "0x049d365SKDMSbd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+  "skuId": "test_100",
   "chain": "STARKNET",
   "chainToken": "ETH",
   "mxnAmount": 250.00,
   "reference": "TET_PURCHASE_20241201",
-  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  "transactionHash": "0x1234567890abcdefsdfdSKSKS4567890abcdef1234567890abcdef"
 })
 });
 
@@ -56,13 +56,13 @@ headers = {
 }
 
 data = {
-  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-  "skuId": "tet_100_mxn",
+  "walletAddress": "0x049d36570d4e4asadjsmklawi84SSKA41b1562b82f9e004dc7",
+  "skuId": "test_100",
   "chain": "STARKNET",
   "chainToken": "ETH",
   "mxnAmount": 250.00,
   "reference": "TET_PURCHASE_20241201",
-  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  "transactionHash": "0x123456oohnftcrsrfyfbcdef123456AKSKSA234567890abcdef"
 }
 
 response = requests.post(url, headers=headers, json=data)
@@ -78,8 +78,8 @@ print(transaction)
 {
   "id": "sku-tx-b43ea3b1-3366-4ecb-9006-bb73b55767dc",
   "orgId": "org_31921AlOILtmngHwdqKOYRgYgfe",
-  "walletAddress": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-  "skuId": "tet_100_mxn",
+  "walletAddress": "0x049d36570d4e46f48e9Sasjkidd6b96f7c741b1562b82f9e004dc7",
+  "skuId": "test_100",
   "mxnAmount": 250,
   "usdAmount": 13.4202222,
   "reference": "TET_PURCHASE_20241201",
@@ -87,7 +87,7 @@ print(transaction)
   "status": "PENDING",
   "chain": "STARKNET",
   "chainToken": "ETH",
-  "transactionHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "transactionHash": "0x1234567890abcdef1234567aka34567890abcdef1234567890abcdef",
   "createdAt": "2025-08-14T00:05:06.602Z",
   "updatedAt": "2025-08-14T00:05:06.602Z",
   "errorMessage": null
