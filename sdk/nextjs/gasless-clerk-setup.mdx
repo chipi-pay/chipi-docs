@@ -3,28 +3,22 @@ title: Next.js with Clerk
 description: Learn how to integrate Chipi Pay with your Next.js application using Clerk for authentication and secure wallet storage.
 ---
 
-# Building with Next.js
+<Steps>
 
-This guide will walk you through integrating Chipi Pay into your Next.js application with Clerk authentication and secure wallet storage. We'll cover everything from installation to implementing secure transfer flows.
+<Step title="Getting Started" titleSize="h2">
 
-## Prerequisites
-
-- Node.js 16 or later
-- Next.js 13 or later
-- Basic knowledge of React and Next.js
-- A Chipi Pay account
-- A Clerk account for authentication
-
-## Getting Started
-
-To get started with Chipi Pay in your Next.js application, you'll need to have a basic Next.js project set up. If you don't have one yet, you can create it using:
+To get started with Chipi Pay in your Next.js application
 
 ```bash
 npx create-next-app@latest my-chipi-app
 cd my-chipi-app
 ```
 
-## Installation
+With Clerk, you can follow their [Quickstart Guide](https://clerk.com/docs/quickstarts/nextjs) to get started.
+
+</Step>
+
+<Step title="Install the Chipi SDK" titleSize="h2">
 
 First, install the required packages:
 
@@ -36,35 +30,41 @@ npm install @chipi-pay/chipi-sdk
 npm install @clerk/nextjs
 ```
 
-## Configuration
+</Step>
 
-1. Create a `.env.local` file in your project root and add your API keys:
+<Step title="Setup the Chipi SDK Provider" titleSize="h2">
+
+1. Create a `.env` file in your project root and add your API keys:
 
 ```bash
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
-NEXT_PUBLIC_CHIPI_API_KEY=your_chipi_api_key
+NEXT_PUBLIC_CHIPI_PUBLIC_KEY=your_chipi_api_public_key
 ```
 
 2. Set up the Chipi Pay provider in your application:
 
-```typescript
-// app/providers.tsx
+```tsx
 "use client";
 
 import { ChipiProvider } from "@chipi-pay/chipi-sdk";
+
+const API_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_PUBLIC_KEY
+if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
+
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ChipiProvider
       config={{
-        apiPublicKey: process.env.NEXT_PUBLIC_CHIPI_API_KEY,
+        apiPublicKey: API_PUBLIC_KEY,
       }}
     >
       {children}
     </ChipiProvider>
   );
 }
+
 ```
 
 3. Update your root layout to use the providers:
@@ -91,50 +91,11 @@ export default function RootLayout({
 }
 ```
 
-## Implementing Wallet Storage with Clerk
+</Step>
 
-1. Create a server action to save the wallet:
+<Step title="Creating a Wallet" titleSize="h2">
 
-```typescript
-// app/actions.ts
-"use server";
-
-import { auth, clerkClient } from "@clerk/nextjs";
-
-export async function saveWallet(walletData: any) {
-  const { userId } = auth();
-  
-  if (!userId) {
-    throw new Error("Not authenticated");
-  }
-
-  // Save wallet to Clerk's public metadata
-  await clerkClient.users.updateUser(userId, {
-    publicMetadata: {
-      wallet: JSON.stringify(walletData)
-    }
-  });
-}
-
-export async function getWallet() {
-  const { userId } = auth();
-  
-  if (!userId) {
-    throw new Error("Not authenticated");
-  }
-
-  const user = await clerkClient.users.getUser(userId);
-  const walletData = user.publicMetadata.wallet;
-  
-  if (!walletData) {
-    return null;
-  }
-
-  return JSON.parse(walletData as string);
-}
-```
-
-2. Create a wallet creation component:
+Create a wallet creation component:
 
 ```typescript
 // app/components/CreateWallet.tsx
@@ -213,7 +174,58 @@ export default function CreateWallet() {
 }
 ```
 
-## Implementing Transfer Flow
+</Step>
+
+<Step title="Storing the Wallet" titleSize="h2">
+
+We need to save the wallet for each new Clerk user. 
+We will use Clerk's public metadata to store the wallet info.
+
+1. Create a server action to save the wallet:
+
+```typescript
+// app/actions.ts
+"use server";
+
+import { auth, clerkClient } from "@clerk/nextjs";
+
+export async function saveWallet(walletData: any) {
+  const { userId } = auth();
+  
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  // Save wallet to Clerk's public metadata
+  await clerkClient.users.updateUser(userId, {
+    publicMetadata: {
+      wallet: JSON.stringify(walletData)
+    }
+  });
+}
+
+export async function getWallet() {
+  const { userId } = auth();
+  
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  const user = await clerkClient.users.getUser(userId);
+  const walletData = user.publicMetadata.wallet;
+  
+  if (!walletData) {
+    return null;
+  }
+
+  return JSON.parse(walletData as string);
+}
+```
+
+</Step>
+
+
+<Step title="Sending USDC Example" titleSize="h2">
 
 Here's an example of implementing a transfer flow with Clerk authentication:
 
@@ -225,7 +237,7 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useTransfer } from "@chipi-pay/chipi-sdk";
 
-const USDC_CONTRACT = "0xA0b86a33E6441b8c4C8C8C8C8C8C8C8C8C8C8C8C"; // Replace with actual USDC contract
+const USDC_CONTRACT = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8";
 
 export default function Transfer() {
   const { user } = useUser();
@@ -332,48 +344,10 @@ export default function Transfer() {
 }
 ```
 
-## Main Page Implementation
+</Step>
 
-```typescript
-// app/page.tsx
-"use client";
+</Steps>
 
-import { useUser } from "@clerk/nextjs";
-import CreateWallet from "./components/CreateWallet";
-import Transfer from "./components/Transfer";
-
-export default function Home() {
-  const { user, isSignedIn } = useUser();
-
-  if (!isSignedIn) {
-    return (
-      <div className="p-5">
-        <h1 className="text-2xl font-bold mb-4">Chipi Pay Demo</h1>
-        <p>Please sign in to continue.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-5 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Chipi Pay Demo</h1>
-      <p className="mb-4">Welcome, {user?.firstName}!</p>
-      
-      <div className="space-y-6">
-        <CreateWallet />
-        <Transfer />
-      </div>
-    </div>
-  );
-}
-```
-
-## Next Steps
-
-- Add error handling and loading states
-- Customize the UI to match your app's design
-- Implement additional features like wallet balance checking
-- Add proper validation for addresses and amounts
 
 <Tip>
   Need help? Check out our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) for

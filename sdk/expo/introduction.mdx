@@ -1,69 +1,48 @@
 ---
 title: 'Expo SDK Introduction'
-description: 'Learn about the Expo SDK capabilities focused on mobile gasless transactions'
+description: 'Learn about the Expo SDK capabilities and what you can build with it'
 ---
 
 # Expo SDK
 
-The Chipi Expo SDK is designed specifically for mobile applications, focusing on gasless transactions and wallet management for React Native and Expo apps. While more focused than our NextJS SDK, it provides everything you need for mobile blockchain interactions.
+Our Expo SDK allows you to create Self-custodial Wallets and sign transactions
+without the need for gas in mobile applications. 
+You can then use the Chipi Dashboard to manage your wallets and transactions. 
+As well as see analytics on your transactions. 
 
-## 🚀 What You Can Build
-
-With the Expo SDK, you can create:
-
-- **Mobile DeFi apps** with gasless transactions
-- **Crypto wallet applications** with social login
-- **Mobile payment apps** for crypto transactions
-- **Gaming apps** with blockchain integration
-- **Social finance apps** with wallet features
+The Chipi Expo SDK is designed specifically for mobile applications, focusing on gasless transactions and wallet management for React Native and Expo apps.
 
 ## ✨ Key Features
 
-### Mobile-Optimized Gasless
-- **Gasless Transactions** - Sponsored transactions for mobile users
-- **Wallet Creation** - Automatic wallet generation with social login
-- **Mobile Authentication** - Touch ID, Face ID, and PIN support
-- **Offline Support** - Queue transactions when offline
+### Complete Wallet Suite
 
-### Mobile-Specific Features
-- **Biometric Integration** - Use fingerprint/face as PIN alternative
-- **Push Notifications** - Transaction status updates
-- **Deep Linking** - Seamless app-to-app navigation
-- **Background Sync** - Sync wallet state in background
+- **Wallet Management** - Create and manage wallets
+- **Transaction Signing** - Sign transactions without the need for gas
+- **Social Login Integration** - Bring your own Auth provider (Clerk, Firebase, etc.)
+- **Automatic Wallet Creation** - No manual key management
+
+### Advanced Wallet Features
+
+- **Sessions** - Allow users to sign once and use their wallet for multiple transactions
+- **Biometrics** - Use biometrics to sign transactions (Touch ID, Face ID, fingerprint)
+- **Mobile Authentication** - Touch ID, Face ID, and PIN support
+- **MPC Support** - Coming soon!
 
 ### Developer Experience
+- **TypeScript Support** - Full type safety
 - **React Native Support** - Full RN compatibility
 - **Expo Integration** - Works with Expo managed workflow
-- **TypeScript Support** - Type-safe development
-- **Hot Reload** - Fast development iteration
+- **Quickstart** - We provide a quickstart guide to get you started
 
 ## 🏗️ Architecture
 
-The Expo SDK is built for mobile-first development:
+Our Expo SDK is a simple wrapper around the Chipi API, optimized for mobile development.
+It is designed to be used with the Chipi Dashboard,
+which is a web-based dashboard for setting up your project.
+Simply follow the steps in the [Quickstart Guide](/sdk/expo/gasless) to get started.
 
-```
-Expo SDK
-├── Core Services
-│   ├── Gasless Transactions
-│   ├── Wallet Management
-│   └── Mobile Authentication
-├── React Native Components
-│   ├── Wallet Interfaces
-│   ├── Transaction Forms
-│   └── Biometric Prompts
-└── Mobile Layer
-    ├── Push Notifications
-    ├── Deep Linking
-    └── Background Sync
-```
-
-## 🔧 Technology Stack
-
-- **Frontend**: React Native, Expo SDK
-- **Authentication**: Biometric + social login
-- **Blockchain**: StarkNet integration
-- **Storage**: Secure local storage
-- **Notifications**: Push notification support
+If you wish to use an unlisted Programming Language, you can use the Chipi API directly.
+Send us a message on [Telegram](https://t.me/+e2qjHEOwImkyZDVh) and we will help you get started.
 
 ## 📱 Platform Support
 
@@ -74,27 +53,14 @@ Expo SDK
 
 ## 🚦 Getting Started
 
-Ready to build mobile apps? Start with our [Gasless Quickstart Guide](/sdk/expo/gasless) to set up gasless transactions:
+Ready to build? Start with our [Gasless Quickstart Guide](/sdk/expo/gasless) to set up gasless transactions, or explore our other guides:
 
 - **[Gasless Tutorial](/sdk/expo/gasless-tutorial)** - Learn gasless transactions for mobile
 - **[Use Biometrics as a PIN](/sdk/expo/use-biometrics)** - Advanced mobile authentication
 
-## 📋 Current Limitations
-
-The Expo SDK is focused on core mobile functionality:
-
-- ✅ **Gasless Transactions** - Full support
-- ✅ **Wallet Management** - Full support
-- ✅ **Mobile Authentication** - Full support
-- ❌ **SKU Management** - Not available (use API instead)
-- ❌ **Payment Processing** - Limited (use API instead)
-- ❌ **Webhook Integration** - Not available (use API instead)
-
-For full payment processing features, consider using our [API Reference](/sdk/api/quickstart) alongside the Expo SDK.
-
 ## 🔗 Resources
 
 - [Dashboard](https://dashboard.chipipay.com/) - Manage your account
-- [API Reference](/sdk/api/quickstart) - For payment processing features
+- [API Reference](/sdk/api/quickstart) - Complete API documentation
 - [GitHub](https://github.com/chipi-pay) - Source code and examples
 - [Support](https://t.me/+e2qjHEOwImkyZDVh) - Community help 
