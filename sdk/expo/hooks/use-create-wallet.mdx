@@ -1,0 +1,149 @@
+---
+title: 'useCreateWallet'
+description: 'Creates a new Argent-compatible wallet on StarkNet. This hook deploys the wallet contract behind the scenes and uses Avnus gasless to sponsor gas fees, resulting in a frictionless onboarding experience.'
+---
+
+## Usage
+
+```typescript
+const { 
+  createWalletAsync, 
+  createWalletResponse, 
+  isLoading, 
+  error 
+} = useCreateWallet();
+```
+
+### Parameters
+
+- `pin` (string): A user-defined code or password used to encrypt the wallet's private key.
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns an object containing:
+
+- `createWalletAsync`: Function to trigger wallet creation
+- `createWalletResponse`: Object with deployment results
+- `isLoading`: Boolean indicating if the operation is in progress
+- `error`: Any error that occurred during the process
+
+## Example Implementation
+
+```typescript
+'use client'
+
+import { useCreateWallet } from "@chipi-pay/chipi-sdk";
+import { useState } from "react";
+
+export function CreateWallet() {
+  const { 
+    createWalletAsync, 
+    createWalletResponse, 
+    isLoading, 
+    error 
+  } = useCreateWallet();
+  
+  const [pin, setPin] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const bearerToken = await getBearerToken();
+    try {
+      await createWalletAsync({ pin, bearerToken });
+      alert('Wallet created successfully!');
+    } catch (err) {
+      console.error('Wallet creation failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold mb-4">Create New Wallet</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Set PIN Code
+          </label>
+          <input
+            type="password"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+            required
+            minLength={4}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Creating...' : 'Create Wallet'}
+        </button>
+      </form>
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+
+      {createWalletResponse && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-semibold">Wallet Details</h3>
+            <a
+              href={`https://starkscan.co/contract/${createWalletResponse.accountAddress}`}
+              target="_blank"
+              rel="noopener"
+              className="text-green-600 hover:text-green-800 text-sm flex items-center gap-1"
+            >
+              View Contract
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm">
+              <span className="font-medium">Address:</span> 
+              <span className="ml-2 font-mono break-all">
+                {createWalletResponse.accountAddress}
+              </span>
+            </p>
+            <p className="text-sm">
+              <span className="font-medium">TX Hash:</span> 
+              <span className="ml-2 font-mono break-all">
+                {createWalletResponse.txHash}
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Security Considerations
+
+- PINs should always be collected client-side
+- Never log or store raw PIN values
+- Use secure encryption before any transmission
+- Store encrypted private key securely
+- Associate with user session (not persistent storage)
+
+## Error Handling
+
+- Catch and handle RPC connection errors
+- Monitor gasless API limits
+- Implement retry logic for failed deployments
+
+<Note>
+  Wallet creation is free! Gas fees are covered by our gasless integration.
+</Note>
+
+

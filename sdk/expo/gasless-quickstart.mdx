@@ -1,6 +1,6 @@
 ---
 title: "Quickstart"
-description: "Quick setup guide for gasless transactions with Chipi SDK in Next.js applications"
+description: "Quick setup guide for gasless transactions with Chipi SDK in Expo applications"
 ---
 
 <Steps>
@@ -21,11 +21,11 @@ For these common Auth Providers, you can get your JWKS Endpoint like this:
   <Tab title="Clerk">
   1. Create a new [JWT Template](https://dashboard.clerk.com/last-active?path=jwt-templates)
 
-  2. Copy your **Jwks Endpoint** and paste it into the JWKS Endpoint field in your Chipi Dashboard.
+  2. Copy your [Jwks Endpoint](https://clerk.com/docs/backend-requests/jwt-templates) and paste it into the JWKS Endpoint field in your Chipi Dashboard.
   </Tab>
 
   <Tab title="Firebase">
-  We have an active PR for Firebase and will be available by next week (22nd of August 2025)
+  We have an active PR for Firebase and will be available by next week (27nd of August 2025)
    so stay tuned!
 
   </Tab>
@@ -51,15 +51,15 @@ Which will give you access to your **Public Key** (`pk_prod_xxxx`). Keep this ha
 <CodeGroup>
 
 ```bash npm
-npm install @chipi/chipi-sdk
+npm install @chipi-pay/chipi-expo@latest
 ```
 
 ```bash yarn
-yarn add @chipi/chipi-sdk
+yarn add @chipi-pay/chipi-expo@latest
 ```
 
 ```bash pnpm
-pnpm add @chipi/chipi-sdk
+pnpm add @chipi-pay/chipi-expo@latest
 ```
 
 </CodeGroup>
