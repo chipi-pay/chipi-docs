@@ -106,13 +106,15 @@ export default function App() {
   </Step>
   <Step title="2. Create the JWT Payload Template">
     Draft a template for your JWT payload. For example:
-    <CodeBlock language="json">
-{`{
-	"email": "{{user.primary_email_address.email_address}}",
-	"orgId": "{{organization.id}}"
-}`}
-    </CodeBlock>
-    Replace the <code>...</code> with the actual data you want to gather.
+    ```Json
+{
+  "email": "{{user.primary_email_address.email_address}}",
+  "orgId": "{{organization.id}}"
+}
+
+```
+   
+    Replace the **email** and **orgId** Keys with the actual data you want to gather.
   </Step>
   <Step title="3. Generate the JWT">
     Use your backend or authentication provider to generate a JWT using the template. [Click](https://clerk.com/docs/backend-requests/jwt-templates) to see more about JWT tokens:

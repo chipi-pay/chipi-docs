@@ -24,16 +24,16 @@ npx expo install expo-local-authentication
 
 ## Basic Implementation
 
-This is the minimal configuration required to enroll and use biometrics, instead of a PIN, to sign transactions.
+This is the minimal configuration required to enroll in and use biometrics instead of a PIN to sign transactions.
 <Steps>
-<Step title="Register Biometric Along with the pin">
+<Step title="Register biometrics along with the PIN">
  ```typescript
 await SecureStore.setItemAsync("wallet_pin", pin, {
   requireAuthentication: true,     
 });
   ```
 </Step>
-<Step title="Read the PIN triggering the biometric prompt">
+<Step title="Read the PIN to trigger the biometric prompt">
   ```typescript
       const storedWallet = await SecureStore.getItemAsync("wallet");
       const pin = await SecureStore.getItemAsync("wallet_pin",{
@@ -65,123 +65,125 @@ await SecureStore.setItemAsync("wallet_pin", pin, {
 
 Here's a simple example of how to implement a secure transfer flow using biometric authentication:
 
-<Steps>
-<Step title="Create a Wallet with PIN">
-  To use biometrics for authentication, you first need to create and securely store a wallet with a PIN (which can be protected by biometrics).
-  Here’s an example wallet creation screen using the [`useCreateWallet`](/sdk/expo/hooks/use-create-wallet) hook:
+<Tabs>
+<Tab title="Create Wallet Component">
+To use biometrics for authentication, you first need to create and securely store a wallet with a PIN (which can be protected by biometrics).
+Here’s an example wallet creation screen using the [`useCreateWallet`](/sdk/expo/hooks/use-create-wallet) hook:
 
-  ```typescript
-  // screens/CreateWalletScreen.tsx
-  import { useCreateWallet } from "@chipi-pay/chipi-expo";
-  import { useAuth } from "@clerk/clerk-expo";
-  import * as SecureStore from "expo-secure-store";
-  import { useState } from "react";
-  import { StyleSheet, Text, View, Alert, Linking } from "react-native";
-  import { PrimaryButton } from "@/components/ui/PrimaryButton";
-  import { SimpleInput } from "@/components/ui/SimpleInput";
+```typescript
+// screens/CreateWalletScreen.tsx
+import { useCreateWallet } from "@chipi-pay/chipi-expo";
+import { useAuth } from "@clerk/clerk-expo";
+import * as SecureStore from "expo-secure-store";
+import { useState } from "react";
+import { StyleSheet, Text, View, Alert, Linking } from "react-native";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { SimpleInput } from "@/components/ui/SimpleInput";
 
-  export const CreateWalletView = () => {
-    const { getToken } = useAuth();
-    const [pin, setPin] = useState<string>("");
-    const [error, setError] = useState("");
-    const { createWalletAsync, isLoading } = useCreateWallet();
-    const [walletData, setWalletData] = useState<any>(null);
+export const CreateWalletView = () => {
+  const { getToken } = useAuth();
+  const [pin, setPin] = useState<string>("");
+  const [error, setError] = useState("");
+  const { createWalletAsync, isLoading } = useCreateWallet();
+  const [walletData, setWalletData] = useState<any>(null);
 
-    const handleCreateWallet = async () => {
-      try {
-        setError("");
-        const token = await getToken({ template: "chipi-sdk-expo" });
-        if (!token) {
-          setError("No bearer token found");
-          return;
-        }
-
-        const result = await createWalletAsync({
-          encryptKey: pin,
-          bearerToken: token,
-        });
-
-        // Save wallet data to local storage, protected by biometrics
-        await SecureStore.setItemAsync(
-          "wallet",
-          JSON.stringify(result.wallet)
-        );
-        await SecureStore.setItemAsync("wallet_pin", pin, {
-          requireAuthentication: true,
-        });
-
-        setWalletData(result);
-        Alert.alert("Success", "Wallet successfully created!");
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        setError("Error creating wallet: " + errorMessage);
+  const handleCreateWallet = async () => {
+    try {
+      setError("");
+      const token = await getToken({ template: "chipi-sdk-expo" });
+      if (!token) {
+        setError("No bearer token found");
+        return;
       }
-    };
 
-    const openStarkscan = (address: string) => {
-      const url = `https://starkscan.co/contract/${address}`;
-      Linking.openURL(url);
-    };
+      const result = await createWalletAsync({
+        encryptKey: pin,
+        bearerToken: token,
+      });
 
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Create New Wallet</Text>
-        <Text style={styles.subtitle}>Set a PIN to secure your wallet</Text>
+      // Save wallet data to local storage, protected by biometrics
+      await SecureStore.setItemAsync(
+        "wallet",
+        JSON.stringify(result.wallet)
+      );
+      await SecureStore.setItemAsync("wallet_pin", pin, {
+        requireAuthentication: true,
+      });
 
-        <SimpleInput
-          placeholder="Enter your PIN (min 4 digits)"
-          value={pin}
-          onChangeText={setPin}
-          keyboardType="numeric"
-          maxLength={6}
-        />
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <PrimaryButton
-          title={isLoading ? "Creating..." : "Create Wallet"}
-          active={pin.length >= 4 && !isLoading}
-          onPress={handleCreateWallet}
-        />
-
-        {walletData && (
-          <View style={styles.walletDetails}>
-            <View style={styles.detailHeader}>
-              <Text style={styles.detailTitle}>Wallet Details</Text>
-              <Text
-                style={styles.viewContract}
-                onPress={() => openStarkscan(walletData.wallet.accountAddress)}
-              >
-                View Contract →
-              </Text>
-            </View>
-
-            <View style={styles.detailItem}>
-              <Text style={styles.detailLabel}>Address:</Text>
-              <Text style={styles.detailValue} numberOfLines={2}>
-                {walletData.wallet.accountAddress}
-              </Text>
-            </View>
-
-            {walletData.wallet.txHash && (
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>TX Hash:</Text>
-                <Text style={styles.detailValue} numberOfLines={2}>
-                  {walletData.wallet.txHash}
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
-      </View>
-    );
+      setWalletData(result);
+      Alert.alert("Success", "Wallet successfully created!");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setError("Error creating wallet: " + errorMessage);
+    }
   };
 
-  ```
-</Step>
-<Step title="Send Token with Biometric">
- ```typescript
- import { useTransfer } from "@chipi-pay/chipi-expo";
+  const openStarkscan = (address: string) => {
+    const url = `https://starkscan.co/contract/${address}`;
+    Linking.openURL(url);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Create New Wallet</Text>
+      <Text style={styles.subtitle}>Set a PIN to secure your wallet</Text>
+
+      <SimpleInput
+        placeholder="Enter your PIN (min 4 digits)"
+        value={pin}
+        onChangeText={setPin}
+        keyboardType="numeric"
+        maxLength={6}
+      />
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <PrimaryButton
+        title={isLoading ? "Creating..." : "Create Wallet"}
+        active={pin.length >= 4 && !isLoading}
+        onPress={handleCreateWallet}
+      />
+
+      {walletData && (
+        <View style={styles.walletDetails}>
+          <View style={styles.detailHeader}>
+            <Text style={styles.detailTitle}>Wallet Details</Text>
+            <Text
+              style={styles.viewContract}
+              onPress={() => openStarkscan(walletData.wallet.accountAddress)}
+            >
+              View Contract →
+            </Text>
+          </View>
+
+          <View style={styles.detailItem}>
+            <Text style={styles.detailLabel}>Address:</Text>
+            <Text style={styles.detailValue} numberOfLines={2}>
+              {walletData.wallet.accountAddress}
+            </Text>
+          </View>
+
+          {walletData.wallet.txHash && (
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>TX Hash:</Text>
+              <Text style={styles.detailValue} numberOfLines={2}>
+                {walletData.wallet.txHash}
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  );
+};
+
+```
+</Tab>
+<Tab title="Send Token with Biometric">
+Use the [useTransfer](/sdk/expo/hooks/use-transfer) hook to send money to another wallet. Setting **requireAuthentication: true** will prompt for your biometric instead of your PIN.
+
+```typescript
+import { useTransfer } from "@chipi-pay/chipi-expo";
 import { useAuth } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
@@ -207,8 +209,7 @@ export const SendTokenView = () => {
         return;
       }
 
-    
-      const pin = await SecureStore.getItemAsync("wallet_pin",{
+      const pin = await SecureStore.getItemAsync("wallet_pin", {
         requireAuthentication: true,
       });
       
@@ -223,7 +224,6 @@ export const SendTokenView = () => {
         return;
       }
 
-
       const transferResponse = await transferAsync({
         encryptKey: pin,
         bearerToken: token,
@@ -234,7 +234,6 @@ export const SendTokenView = () => {
         decimals: 6,
       });
 
-      
       if (!transferResponse) {
         setError("Failed to transfer tokens");
         return;
@@ -278,12 +277,13 @@ export const SendTokenView = () => {
     </View>
   );
 };
-  ```
-</Step>
-</Steps>
+
+```
+</Tab>
+</Tabs>
 
 ## Useful resources 
-- Making an Eas Build in [Expo](https://docs.expo.dev/build/introduction/)
+- Making an EAS Build in [Expo](https://docs.expo.dev/build/introduction/)
 
 ## Next Steps
 
