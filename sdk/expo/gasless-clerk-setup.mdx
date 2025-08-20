@@ -1,5 +1,5 @@
 ---
-title: Expo with Clerk,
+title: Expo with Clerk
 description: Learn how to integrate Chipi Pay with your Expo application using Clerk Auth for authentication and biometric security.
 ---
 
@@ -56,19 +56,22 @@ EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
   "expo": {
     "plugins": [
       [
-        "expo-secure-store",
+        "expo-local-authentication",
         {
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to unlock your wallet."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "ios": {
+      "supportsTablet": true,
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        "NSFaceIDUsageDescription": "Allow $(PRODUCT_NAME) to use Face ID to unlock your wallet."
       }
     }
   }
 }
+
 ```
 
 
@@ -95,6 +98,31 @@ export default function App() {
   );
 }
 ```
+## Adding Clerk JWT Templates
+
+<Steps title="Create a JWT Template for Gathering User Data">
+  <Step title="1. Define the Data to Gather">
+    Decide which user attributes you need to include in your JWT. For example: <b>userId</b>, <b>email</b>, <b>role</b>, or any custom claims relevant to your application.
+  </Step>
+  <Step title="2. Create the JWT Payload Template">
+    Draft a template for your JWT payload. For example:
+    <CodeBlock language="json">
+{`{
+	"email": "{{user.primary_email_address.email_address}}",
+	"orgId": "{{organization.id}}"
+}`}
+    </CodeBlock>
+    Replace the <code>...</code> with the actual data you want to gather.
+  </Step>
+  <Step title="3. Generate the JWT">
+    Use your backend or authentication provider to generate a JWT using the template. [Click](https://clerk.com/docs/backend-requests/jwt-templates) to see more about JWT tokens:
+  
+    This JWT can now be used to securely transmit the gathered user data.
+  </Step>
+  <Step title="4. Register JWT in Your Application">
+  Register JWKS Endpoint URL in the [dashboard](https://dashboard.chipipay.com/configure/jwks-endpoint)
+  </Step>
+</Steps>
 
 
 ## Setting up Secure Storage and Biometric Authentication
@@ -148,113 +176,7 @@ export const isBiometricAvailable = async () => {
 ```
 
 
-## Implementing Secure Transfer Flow
 
-Here's an example of implementing a secure transfer flow with biometric authentication:
-
-```typescript
-// screens/TransferScreen.tsx
-import { useState } from "react";
-import { View, Button, Alert, TextInput } from "react-native";
-import { useTransfer } from "@chipi-pay/chipi-expo";
-import { useAuth } from "@clerk/clerk-expo";
-import { getWalletStorage, getPinStorage, isBiometricAvailable } from "../utils/secureStorage";
-
-// Constants
-export const USDC_CONTRACT = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8";
-
-function TransferScreen() {
-  const { transferAsync } = useTransfer();
-  const { getToken } = useAuth();
-  const [amount, setAmount] = useState("");
-  const [recipientAddress, setRecipientAddress] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleTransfer = async () => {
-    try {
-      setIsProcessing(true);
-      setError("");
-
-      // Check if biometric authentication is available
-      const isBiometricAvailable = await isBiometricAvailable();
-      if (!isBiometricAvailable) {
-        setError("Biometric authentication is not available on this device");
-        return;
-      }
-
-      // Get stored wallet and PIN
-      const storedWallet = await getWalletStorage();
-      if (!storedWallet) {
-        setError("No wallet found. Please create a wallet first.");
-        return;
-      }
-
-      const pin = await getPinStorage();
-      if (!pin) {
-        setError("No PIN found");
-        return;
-      }
-
-      // Get the bearer token
-      const token = await getToken({ template: "chipi-sdk-expo" });
-      if (!token) {
-        setError("No bearer token found");
-        return;
-      }
-
-      // Execute transfer
-      const transferResponse = await transferAsync({
-        encryptKey: pin,
-        bearerToken: token,
-        wallet: JSON.parse(storedWallet),
-        contractAddress: USDC_CONTRACT,
-        recipient: recipientAddress,
-        amount: parseFloat(amount),
-        decimals: 6,
-      });
-
-      Alert.alert("Success", "Transfer completed successfully");
-      
-      // Clear form
-      setAmount("");
-      setRecipientAddress("");
-    } catch (error) {
-      setError(error.message || "Transfer failed");
-      Alert.alert("Error", error.message || "Transfer failed");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <View style={{ padding: 20 }}>
-      {error ? <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text> : null}
-      
-      <TextInput
-        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder="Recipient Address"
-        value={recipientAddress}
-        onChangeText={setRecipientAddress}
-      />
-      
-      <TextInput
-        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder="Amount"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
-      
-      <Button 
-        title={isProcessing ? "Processing..." : "Make Transfer"} 
-        onPress={handleTransfer}
-        disabled={isProcessing || !amount || !recipientAddress}
-      />
-    </View>
-  );
-}
-```
 
 ## Next Steps
 

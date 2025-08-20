@@ -88,12 +88,12 @@
             "group": "SDK Hooks",
             "icon": "fish",
             "pages": [
-              "sdk/api/hooks/use-create-wallet",
-              "sdk/api/hooks/use-approve",
-              "sdk/api/hooks/use-stake-vesu-usdc",
-              "sdk/api/hooks/use-withdraw-vesu-usdc",
-              "sdk/api/hooks/use-transfer",
-              "sdk/api/hooks/use-call-any-contract"
+              "sdk/expo/hooks/use-create-wallet",
+              "sdk/expo/hooks/use-approve",
+              "sdk/expo/hooks/use-stake-vesu-usdc",
+              "sdk/expo/hooks/use-withdraw-vesu-usdc",
+              "sdk/expo/hooks/use-transfer",
+              "sdk/expo/hooks/use-call-any-contract"
             ]
           }
         ]
