@@ -1,0 +1,29 @@
+<Step title="Configure your Authentication" titleSize="h2">
+
+    You'll need to [add the JWKS Endpoint](https://dashboard.chipipay.com/configure/jwks-endpoint) from your Auth Provider to authenticate gasless transactions.
+
+    <Tip>
+    With this JWKS Endpoint setup, you can now run secure code in your frontend
+    using a rotating JWT token.
+    </Tip>
+
+    ### Getting your JWKS Endpoint
+
+    For these common Auth Providers, you can get your JWKS Endpoint like this:
+
+    <Tabs>
+    <Tab title="Clerk">
+    1. Go to your [API Keys](https://dashboard.clerk.com/last-active?path=api-keys)
+
+    2. Copy your **Jwks Url** and paste it into the JWKS Endpoint field in your Chipi Dashboard.
+    </Tab>
+
+    <Tab title="Firebase">
+    We have an active PR for Firebase and will be available by next month.
+    so stay tuned!
+
+    </Tab>
+
+    </Tabs>
+
+</Step>

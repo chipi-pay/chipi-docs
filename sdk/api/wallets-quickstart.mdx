@@ -1,0 +1,231 @@
+---
+title: "Quickstart"
+description: "Quick setup guide for gasless transactions using only the Chipi API"
+---
+
+import SetupJWKSSnippet from '/snippets/dashboard/setup-jwks.snippet.mdx';
+import GetPublicKeySnippet from '/snippets/dashboard/get-public-key.snippet.mdx';
+
+<Steps>
+  <SetupJWKSSnippet />
+  <GetPublicKeySnippet />
+  
+  <Step title="Frontend Code to create a wallet" titleSize="h2">
+    Since this wallet is self-custodial, there are many steps that need to be done in the frontend.
+
+    Here is the code to create a wallet for your user.
+
+    <Warning>
+      The `@avnu/gasless-sdk` is deprecated, but still safe to use. Chipi Pay will update this feature in October 2025.
+    </Warning>
+
+    ```typescript
+    // External dependencies (you'll need to install these)
+    import CryptoJS from "crypto-js";
+    import type { DeploymentData } from "@avnu/gasless-sdk";
+    import {
+      Account,
+      CairoCustomEnum,
+      CairoOption,
+      CairoOptionVariant,
+      CallData,
+      ec,
+      hash,
+      num,
+      RpcProvider,
+      stark,
+    } from "starknet";
+
+    // Local imports (included inline)
+    // Encryption utility
+    const encryptPrivateKey = (
+      privateKey: string,
+      password: string,
+    ): string => {
+      if (!privateKey || !password) {
+        throw new Error("Private key and password are required");
+      }
+      return CryptoJS.AES.encrypt(privateKey, password).toString();
+    };
+
+    // Types (included inline)
+    interface WalletData {
+      publicKey: string;
+      encryptedPrivateKey: string;
+    }
+
+    interface CreateWalletParams {
+      encryptKey: string;
+      apiPublicKey: string;
+      bearerToken: string;
+      nodeUrl: string;
+    }
+
+    interface CreateWalletResponse {
+      success: boolean;
+      wallet: WalletData;
+      txHash: string;
+    }
+
+    // Backend URL constant
+    const BACKEND_URL = "https://api.chipipay.com/v1";
+
+    // Main function
+    export const createWallet = async (
+      params: CreateWalletParams
+    ): Promise<CreateWalletResponse> => {
+      // console.log("create wallet Params: ", params);
+      try {
+        const { encryptKey, apiPublicKey, bearerToken, nodeUrl } = params;
+       
+        const provider = new RpcProvider({ nodeUrl: nodeUrl });
+        // Generating the private key with Stark Curve
+        const privateKeyAX = stark.randomAddress();
+        const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKeyAX);
+
+        // Using Argent X Account v0.4.0 class hash
+        const accountClassHash = "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f"
+      
+        // Calculate future address of the ArgentX account
+        const axSigner = new CairoCustomEnum({
+          Starknet: { pubkey: starkKeyPubAX },
+        });
+        // Set the dApp Guardian address
+        const axGuardian = new CairoOption<unknown>(CairoOptionVariant.None);
+
+        const AXConstructorCallData = CallData.compile({
+          owner: axSigner,
+          guardian: axGuardian,
+        });
+
+        const publicKey = hash.calculateContractAddressFromHash(
+          starkKeyPubAX,
+          accountClassHash,
+          AXConstructorCallData,
+          0
+        );
+        // console.log("Contract address: ", contractAddress);
+       
+        // Initiating Account
+        const account = new Account(provider, publicKey, privateKeyAX);
+        // console.log("Account ", { ...account });
+
+        // Backend Call API to create the wallet
+        console.log("apiPublicKey", apiPublicKey);
+        const typeDataResponse = await fetch(`${BACKEND_URL}/chipi-wallets/prepare-creation`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken}`,
+            'x-api-key': apiPublicKey,
+          },
+          body: JSON.stringify({
+            publicKey,
+          }),
+        });
+        const { typeData, accountClassHash: accountClassHashResponse } = await typeDataResponse.json();
+
+        // console.log("Type data: ", typeData);
+        // Sign the message
+        const userSignature = await account.signMessage(typeData);
+
+        // console.log("User signature: ", userSignature);
+        const deploymentData: DeploymentData = {
+          class_hash: accountClassHashResponse,
+          salt: starkKeyPubAX,
+          unique: `${num.toHex(0)}`,
+          calldata: AXConstructorCallData.map((value: any) => num.toHex(value)),
+        };
+
+        // console.log("Deployment data: ------ ", deploymentData);
+        const encryptedPrivateKey = encryptPrivateKey(privateKeyAX, encryptKey);
+        // console.log("Encrypted private key: ", encryptedPrivateKey);
+
+        // Llamar a la API para guardar la wallet en dashboard
+        const executeTransactionResponse = await fetch(`${BACKEND_URL}/chipi-wallets`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken}`,
+            'x-api-key': apiPublicKey,
+          },
+          body: JSON.stringify({
+            apiPublicKey,
+            publicKey,
+            userSignature: {
+              r: (userSignature as any).r.toString(),
+              s: (userSignature as any).s.toString(),
+              recovery: (userSignature as any).recovery
+            },
+            typeData,
+            encryptedPrivateKey,
+            deploymentData: {
+              ...deploymentData,
+              salt: `${deploymentData.salt}`,
+              calldata: deploymentData.calldata.map((data: any) => `${data}`),
+            }
+          }),
+        });
+        const executeTransaction = await executeTransactionResponse.json();
+        console.log("Execute transaction: ", executeTransaction);
+
+        if (executeTransaction.success) {
+          return {
+            success: true,
+            txHash: executeTransaction.txHash,
+            wallet: {
+              publicKey: executeTransaction.walletPublicKey,
+              encryptedPrivateKey: encryptedPrivateKey,
+            } as WalletData,
+          };
+        } else {
+          return {
+            success: false,
+            txHash: "",
+            wallet: {
+              publicKey: "",
+              encryptedPrivateKey: "",
+            } as WalletData,
+          };
+        }
+      } catch (error: unknown) {
+        console.error("Error detallado:", error);
+
+        if (error instanceof Error && error.message.includes("SSL")) {
+          throw new Error(
+            "Error de conexión SSL. Intenta usando NODE_TLS_REJECT_UNAUTHORIZED=0 o verifica la URL del RPC"
+          );
+        }
+
+        throw new Error(
+          `Error creating wallet: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
+      }
+    };
+    ```
+  </Step>
+
+  <Step title="Create a Wallet" titleSize="h2">
+    Now you can create a wallet for your user.
+  
+    <Tip>
+      For the bearerToken you need to pass a valid JWT token from your Auth Provider.
+    </Tip>
+
+    ```typescript
+    // Example usage:
+    const params: CreateWalletParams = {
+      encryptKey: "1234", // This is an encryption key that the user will have to input every time to decrypt the private key
+      apiPublicKey: "pk_prod_***", // This is your Chipi Pay public key
+      bearerToken: "your-bearer-token", // This is a valid JWT token from your Auth Provider
+      nodeUrl: "https://starknet-mainnet.infura.io/v3/YOUR_PROJECT_ID" // This is the Starknet Mainnet RPC URL
+    };
+
+    createWallet(params)
+      .then(response => console.log("Wallet created:", response))
+      .catch(error => console.error("Error:", error));
+    ```
+  </Step>
+</Steps>

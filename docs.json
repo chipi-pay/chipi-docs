@@ -118,6 +118,13 @@
             ]
           },
           {
+            "group": "Self Custodial Wallets",
+            "icon": "wallet",
+            "pages": [
+              "sdk/api/wallets-quickstart"
+            ]
+          },
+          {
             "group": "Buying Services",
             "icon": "cart-shopping",
             "pages": [
