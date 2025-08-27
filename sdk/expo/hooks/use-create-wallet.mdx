@@ -50,7 +50,7 @@ export function CreateWallet() {
     e.preventDefault();
     const bearerToken = await getBearerToken();
     try {
-      await createWalletAsync({ pin, bearerToken });
+      await createWalletAsync({  encryptKey:pin, bearerToken });
       alert('Wallet created successfully!');
     } catch (err) {
       console.error('Wallet creation failed:', err);
