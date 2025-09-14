@@ -1,0 +1,155 @@
+---
+title: 'useApprove'
+description: 'Grants permission to a smart contract to spend tokens from the user wallet. Required before staking or other delegated actions.'
+---
+
+## Usage
+
+```typescript
+const { approveAsync, approveData, isLoading, error } = useApprove();
+```
+
+### Parameters
+
+- `encryptKey` (string): User's decryption PIN
+- `wallet` (WalletData): Wallet public/private key pair
+- `contractAddress` (string): Token contract to approve
+- `spender` (string): Contract address to authorize
+- `amount` (string | number): Maximum spend allowance
+- `decimals` (number): Token decimals (default: 18)
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns an object containing:
+
+- `approveAsync`: Function to trigger token approval
+- `approveData`: Transaction hash of the approval
+- `isLoading`: Boolean indicating if the operation is in progress
+- `error`: Any error that occurred during the process
+
+## Example Implementation
+
+```typescript
+'use client'
+
+import { useApprove } from "@chipi-stack/chipi-react";
+import { useState } from "react";
+
+const VESU_CONTRACT = "0x037ae3f583c8d644b7556c93a04b83b52fa96159b2b0cbd83c14d3122aef80a2";
+
+// Sample wallet data - replace with your wallet in production
+const sampleWallet: { publicKey: string; encryptedPrivateKey: string } = {
+  publicKey: "0x123...yourPublicKeyHere",
+  encryptedPrivateKey: "encrypted:key:data" // This would be encrypted data in production
+};
+
+export function ApproveForm() {
+  const { approveAsync, approveData, isLoading, error } = useApprove();
+  const [wallet] = useState(sampleWallet);
+  const [form, setForm] = useState({
+    pin: '',
+    amount: ''
+  });
+
+  const handleApprove = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const bearerToken = await getBearerToken();
+
+    try {
+      await approveAsync({
+        encryptKey: form.pin,
+        wallet: {
+          publicKey: wallet.publicKey,
+          encryptedPrivateKey: wallet.encryptedPrivateKey
+        },
+        bearerToken,
+        contractAddress: VESU_CONTRACT,
+        spender: VESU_CONTRACT, // Authorizing VESU contract
+        amount: form.amount,
+        decimals: 18
+      });
+    } catch (err) {
+      console.error('Approval failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Approve Token Access</h2>
+      
+      <form onSubmit={handleApprove} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Security PIN</label>
+          <input
+            type="password"
+            value={form.pin}
+            onChange={(e) => setForm({...form, pin: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Amount to Approve</label>
+          <input
+            type="number"
+            value={form.amount}
+            onChange={(e) => setForm({...form, amount: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Approving...' : 'Authorize Contract'}
+        </button>
+      </form>
+
+      {approveData && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <p className="text-sm font-mono break-all">
+            Approval TX: {approveData}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Security Considerations
+
+- Always use encrypted private keys
+- Never store or transmit raw private keys
+- Implement proper PIN validation
+- Use secure storage for wallet data
+- Consider implementing approval limits
+
+## Error Handling
+
+- Handle insufficient token balance
+- Validate contract addresses
+- Check for existing approvals
+- Monitor gas fees
+- Implement retry logic for failed transactions
+
+<Warning>
+  Approvals are specific to each token-contract pair. You'll need to re-approve when interacting with new contracts.
+</Warning>
+
+## Related Actions
+
+- [Stake](/api-reference/hooks/use-stake) - Requires prior approval
+- [Transfer](/api-reference/hooks/use-transfer) - For moving tokens after approval

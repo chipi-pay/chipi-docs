@@ -47,12 +47,13 @@
             "group": "SDK Hooks",
            "icon": "fish",
             "pages": [
-              "sdk/api/hooks/use-create-wallet",
-              "sdk/api/hooks/use-approve",
-              "sdk/api/hooks/use-stake-vesu-usdc",
-              "sdk/api/hooks/use-withdraw-vesu-usdc",
-              "sdk/api/hooks/use-transfer",
-              "sdk/api/hooks/use-call-any-contract"
+              "sdk/nextjs/hooks/use-create-wallet",
+              "sdk/nextjs/hooks/use-approve",
+              "sdk/nextjs/hooks/use-stake-vesu-usdc",
+              "sdk/nextjs/hooks/use-withdraw-vesu-usdc",
+              "sdk/nextjs/hooks/use-transfer",
+              "sdk/nextjs/hooks/use-call-any-contract",
+              "sdk/nextjs/hooks/use-record-transaction"
             ]
           }
         ]
@@ -93,6 +94,7 @@
               "sdk/expo/hooks/use-stake-vesu-usdc",
               "sdk/expo/hooks/use-withdraw-vesu-usdc",
               "sdk/expo/hooks/use-transfer",
+              "sdk/expo/hooks/use-record-transaction",
               "sdk/expo/hooks/use-call-any-contract"
             ]
           }
@@ -132,7 +134,20 @@
               "sdk/api/endpoint/get-skus",
               "sdk/api/endpoint/buy-sku"
             ]
-          }   
+          },
+          {
+            "group": "SDK Hooks",
+            "icon": "fish",
+            "pages": [
+              "sdk/api/hooks/use-create-wallet",
+              "sdk/api/hooks/use-approve",
+              "sdk/api/hooks/use-stake-vesu-usdc",
+              "sdk/api/hooks/use-withdraw-vesu-usdc",
+              "sdk/api/hooks/use-transfer",
+              "sdk/api/hooks/use-call-any-contract",
+              "sdk/api/hooks/use-record-transaction"
+            ]
+          }
         ]
       }
     ]
