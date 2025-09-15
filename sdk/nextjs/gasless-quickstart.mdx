@@ -51,15 +51,15 @@ Which will give you access to your **Public Key** (`pk_prod_xxxx`). Keep this ha
 <CodeGroup>
 
 ```bash npm
-npm install @chipi-pay/chipi-sdk
+npm install @chipi-stack/nextjs
 ```
 
 ```bash yarn
-yarn add @chipi-pay/chipi-sdk
+yarn add @chipi-stack/nextjs
 ```
 
 ```bash pnpm
-pnpm add @chipi-pay/chipi-sdk
+pnpm add @chipi-stack/nextjs
 ```
 
 </CodeGroup>
@@ -74,36 +74,12 @@ pnpm add @chipi-pay/chipi-sdk
 NEXT_PUBLIC_CHIPI_PUBLIC_KEY=pk_prod_xxxx
 ```
 
-2. Create a `Providers.tsx` file to wrap your application.
-
-```tsx
-"use client";
-
-import { ChipiProvider } from "@chipi-pay/chipi-sdk";
-
-const API_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_PUBLIC_KEY
-if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
 
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <ChipiProvider
-      config={{
-        apiPublicKey: API_PUBLIC_KEY,
-      }}
-    >
-      {children}
-    </ChipiProvider>
-  );
-}
-
-```
-
-3. In your `layout.tsx`, wrap your app with the `Providers` component as shown below:
+2. In your `layout.tsx`, wrap your app with the `ChipiProvider` component as shown below:
 
 ```tsx
 // app/layout.tsx
-import { Providers } from "./providers";
 
 export default function RootLayout({
   children,
@@ -113,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <ChipiProvider>{children}</ChipiProvider>
       </body>
     </html>
   );
