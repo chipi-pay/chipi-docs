@@ -1,0 +1,168 @@
+---
+title: 'useTransfer'
+description: 'Transfers tokens from the user wallet to another address. Uses Avnus gasless to cover gas fees.'
+---
+
+## Usage
+
+```typescript
+const { 
+  transferAsync, 
+  transferData, 
+  isLoading, 
+  error 
+} = useTransfer();
+```
+
+### Parameters
+
+- `encryptKey` (string): PIN used to decrypt the private key
+- `wallet` (WalletData): Object with publicKey and encryptedPrivateKey
+- `contractAddress` (string): Token contract address
+- `recipient` (string): Destination wallet address
+- `amount` (string | number): Transfer amount
+- `decimals` (number): Token decimals (default: 18)
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns an object containing:
+
+- `transferAsync`: Function to trigger token transfer
+- `transferData`: Transaction hash of the transfer
+- `isLoading`: Boolean indicating if the operation is in progress
+- `error`: Any error that occurred during the process
+
+## Example Implementation
+
+```typescript
+'use client'
+
+import { useTransfer } from "@chipi-stack/chipi-react";
+import { useState } from "react";
+
+export function TransferForm() {
+  const { transferAsync, transferData, isLoading, error } = useTransfer();
+  const [form, setForm] = useState({
+    pin: '',
+    recipient: '',
+    amount: ''
+  });
+
+  const BROTHER_TOKEN = {
+    address: '0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee',
+    decimals: 18
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { getToken } = useAuth();
+    const bearerToken = await getBearerToken();
+    const jwtToken = await getToken();
+
+    try {
+      await transferAsync({
+        params:{
+        amount:form.amount,
+        encryptKey: form.pin,
+        wallet: {
+          publicKey: "0x123...yourPublicKeyHere",
+          encryptedPrivateKey: "encrypted:key:data"
+        },
+        recipient: form.recipient,
+        },
+        bearerToken:
+      });
+    } catch (err) {
+      console.error('Transfer failed:', err);
+    }}
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Transfer Tokens</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Security PIN</label>
+          <input
+            type="password"
+            value={form.pin}
+            onChange={(e) => setForm({...form, pin: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Recipient Address</label>
+          <input
+            type="text"
+            value={form.recipient}
+            onChange={(e) => setForm({...form, recipient: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Amount</label>
+          <input
+            type="number"
+            step={`0.${'0'.repeat(BROTHER_TOKEN.decimals-1)}1`}
+            value={form.amount}
+            onChange={(e) => setForm({...form, amount: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Processing...' : 'Transfer'}
+        </button>
+      </form>
+
+      {transferData && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <p className="text-sm font-mono break-all">
+            TX Hash: {transferData}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Security Considerations
+
+- Always verify recipient addresses
+- Use encrypted private keys
+- Implement proper PIN validation
+- Monitor transaction status
+
+## Error Handling
+
+- Handle insufficient token balance
+- Validate wallet addresses
+- Monitor gas fees
+- Implement retry logic for failed transactions
+
+<Danger>
+  Always verify recipient addresses. Transfers on StarkNet are irreversible.
+</Danger>
+
+## Related Actions
+
+- [Approve](/api-reference/hooks/use-approve) - Required before transferring new token types
+- [Stake](/api-reference/hooks/use-stake-vesu-usdc) - For staking tokens

@@ -24,7 +24,7 @@ First, install the required packages:
 
 ```bash
 # Install Chipi Pay SDK
-npm install @chipi-pay/chipi-sdk
+npm install @chipi-stack/nextjs
 
 # Install Clerk
 npm install @clerk/nextjs
@@ -42,53 +42,27 @@ CLERK_SECRET_KEY=your_clerk_secret_key
 NEXT_PUBLIC_CHIPI_PUBLIC_KEY=your_chipi_api_public_key
 ```
 
-2. Set up the Chipi Pay provider in your application:
+2. Set up the Chipi Pay provider in your application :
 
 ```tsx
+// app/layout.tsx
+
 "use client";
 
-import { ChipiProvider } from "@chipi-pay/chipi-sdk";
+import { ChipiProvider } from "@chipi-stack/nextjs";
 
-const API_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_PUBLIC_KEY
-if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
-
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <ChipiProvider
-      config={{
-        apiPublicKey: API_PUBLIC_KEY,
-      }}
-    >
-      {children}
-    </ChipiProvider>
-  );
-}
-
-```
-
-3. Update your root layout to use the providers:
-
-```typescript
-// app/layout.tsx
-import { ClerkProvider } from '@clerk/nextjs'
-import { Providers } from './providers'
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
+export default function RootLayout({children}: {
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body>
-        <ClerkProvider>
-          <Providers>{children}</Providers>
-        </ClerkProvider>
+        <ChipiProvider>{children}</ChipiProvider>
       </body>
     </html>
-  )
+  );
 }
+
 ```
 
 </Step>
@@ -103,16 +77,15 @@ Create a wallet creation component:
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useCreateWallet } from "@chipi-pay/chipi-sdk";
-import { saveWallet } from "../actions";
+import { useCreateWallet } from "@chipi-stack/nextjs";
 
 export default function CreateWallet() {
   const { user } = useUser();
-  const { createWalletAsync } = useCreateWallet();
+  const { getToken } = useAuth();
+  const { createWalletAsync , isLoading} = useCreateWallet();
   const [encryptKey, setEncryptKey] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, serError]= useState("");
+
 
   const handleCreateWallet = async () => {
     if (!encryptKey) {
@@ -121,21 +94,20 @@ export default function CreateWallet() {
     }
 
     try {
-      setIsProcessing(true);
       setError("");
       setSuccess("");
+      const token = await getToken();
 
-      const response = await createWalletAsync({
-        encryptKey: encryptKey,
-        bearerToken: await user?.getToken({ template: "chipi-sdk" }),
+      await createWalletAsync({
+        params: {
+          encryptKey,
+          externalUserId: user.id,
+        },
+        bearerToken: token || "",
       });
+      
 
       console.log('createWalletResponse', response);
-      
-      // Save wallet to Clerk's public metadata
-      await saveWallet(response.wallet);
-      
-      setSuccess("Wallet created successfully!");
       setEncryptKey("");
     } catch (error) {
       setError(error.message || "Failed to create wallet");
@@ -166,59 +138,11 @@ export default function CreateWallet() {
           disabled={isProcessing || !encryptKey}
           className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 w-full"
         >
-          {isProcessing ? "Creating..." : "Create Wallet"}
+          {isLoading ? "Creating..." : "Create Wallet"}
         </button>
       </div>
     </div>
   );
-}
-```
-
-</Step>
-
-<Step title="Storing the Wallet" titleSize="h2">
-
-We need to save the wallet for each new Clerk user. 
-We will use Clerk's public metadata to store the wallet info.
-
-1. Create a server action to save the wallet:
-
-```typescript
-// app/actions.ts
-"use server";
-
-import { auth, clerkClient } from "@clerk/nextjs";
-
-export async function saveWallet(walletData: any) {
-  const { userId } = auth();
-  
-  if (!userId) {
-    throw new Error("Not authenticated");
-  }
-
-  // Save wallet to Clerk's public metadata
-  await clerkClient.users.updateUser(userId, {
-    publicMetadata: {
-      wallet: JSON.stringify(walletData)
-    }
-  });
-}
-
-export async function getWallet() {
-  const { userId } = auth();
-  
-  if (!userId) {
-    throw new Error("Not authenticated");
-  }
-
-  const user = await clerkClient.users.getUser(userId);
-  const walletData = user.publicMetadata.wallet;
-  
-  if (!walletData) {
-    return null;
-  }
-
-  return JSON.parse(walletData as string);
 }
 ```
 
@@ -235,20 +159,21 @@ Here's an example of implementing a transfer flow with Clerk authentication:
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useTransfer } from "@chipi-pay/chipi-sdk";
+import { useTransfer } from "@chipi-stack/nextjs";
 
 const USDC_CONTRACT = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8";
 
 export default function Transfer() {
   const { user } = useUser();
-  const { transferAsync } = useTransfer();
   const [amount, setAmount] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
   const [encryptKey, setEncryptKey] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
+  const [error, setError] = useState(null);
+  const { getToken, isLoaded: isUserLoaded } = useAuth();
+  const { getWalletAsync } = useGetWallet()
+  const { transferAsync,  isLoading: isLoadingTransfer}  = useTransfer();
+  const [success, setSuccess]= useState(null)
+ 
   const handleTransfer = async () => {
     if (!amount || !recipientAddress || !encryptKey) {
       setError("Please fill in all fields");
@@ -256,47 +181,39 @@ export default function Transfer() {
     }
 
     try {
-      setIsProcessing(true);
-      setError("");
-      setSuccess("");
-
-      // Get stored wallet from Clerk's public metadata
-      const storedWallet = user?.publicMetadata?.wallet;
-      if (!storedWallet) {
-        setError("No wallet found. Please create a wallet first.");
-        return;
-      }
-
-      // Get the bearer token
-      const token = await user?.getToken({ template: "chipi-sdk" });
+      const token = getToken();
+      
       if (!token) {
         setError("No bearer token found");
         return;
       }
 
-      const transferResponse = await transferAsync({
-        encryptKey: encryptKey,
+       const wallet = await getWalletAsync({
+        externalUserId: user.id,
         bearerToken: token,
-        wallet: JSON.parse(storedWallet as string),
-        contractAddress: USDC_CONTRACT,
-        recipient: recipientAddress,
-        amount: amount,
-        decimals: 6,
       });
-
+  
+      // make the transfer
+      const transferResponse = await transferAsync({
+        bearerToken: token,
+        params: {
+          encryptKey,
+          wallet: {
+            publicKey: wallet.publicKey,
+            encryptedPrivateKey: wallet.encryptedPrivateKey,
+          },
+          amount: String(amount),
+          token: "USDC" as ChainToken,
+          recipient: recipientAddress,
+        },
+      });
       console.log("transfer response", transferResponse);
       setSuccess("Transfer completed successfully!");
       
-      // Clear form
-      setAmount("");
-      setRecipientAddress("");
-      setEncryptKey("");
     } catch (error) {
       setError(error.message || "Transfer failed");
       console.error("Transfer error:", error);
-    } finally {
-      setIsProcessing(false);
-    }
+    } 
   };
 
   return (
@@ -333,10 +250,10 @@ export default function Transfer() {
         
         <button
           onClick={handleTransfer}
-          disabled={isProcessing || !amount || !recipientAddress || !encryptKey}
+          disabled={isLoadingTransfer || !amount || !recipientAddress || !encryptKey}
           className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50 w-full"
         >
-          {isProcessing ? "Processing..." : "Make Transfer"}
+          {isLoadingTransfer ? "Processing..." : "Make Transfer"}
         </button>
       </div>
     </div>

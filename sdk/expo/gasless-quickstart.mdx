@@ -51,15 +51,15 @@ Which will give you access to your **Public Key** (`pk_prod_xxxx`). Keep this ha
 <CodeGroup>
 
 ```bash npm
-npm install @chipi-pay/chipi-expo@latest
+npm install @chipi-stack/expo@latest
 ```
 
 ```bash yarn
-yarn add @chipi-pay/chipi-expo@latest
+yarn add @chipi-stack/expo@latest
 ```
 
 ```bash pnpm
-pnpm add @chipi-pay/chipi-expo@latest
+pnpm add @chipi-stack/expo@latest
 ```
 
 </CodeGroup>
@@ -79,7 +79,7 @@ EXPO_PUBLIC_CHIPI_PUBLIC_KEY=pk_prod_xxxx
 ```tsx
 // app/_layout.tsx
 
-import { ChipiProvider } from "@chipi-pay/chipi-sdk";
+import { ChipiProvider } from "@chipi-stack/expo";
 
 const API_PUBLIC_KEY = process.env.EXPO_PUBLIC_CHIPI_PUBLIC_KEY;
 if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");

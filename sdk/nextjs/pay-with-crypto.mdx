@@ -28,13 +28,8 @@ description: Add a crypto payment button to your website in minutes
   <Step title="Get your merchant wallet address" titleSize="h2">
     Your merchant wallet address is where all payments will be sent.
 
-    1. Navigate to the [Merchant Configuration](https://dashboard.chipipay.com/merchant/configure) page in your dashboard
-    2. Copy your Merchant Wallet Address:
-
-    ```bash
-    0x1234567890123456789012345678901234567890
-    ```
-
+    1. Navigate to the [Merchant Configuration](https://dashboard.chipipay.com/configure/merchant) page in your dashboard and copy your Merchant Wallet Address
+    
     <Warning>
     Keep your wallet address secure and only share it through your payment button implementation.
     </Warning>
@@ -48,22 +43,123 @@ description: Add a crypto payment button to your website in minutes
         Perfect for Next.js applications.
 
         ```typescript
-        import Link from 'next/link'
+    
+     "use client";
 
-        export function PayCryptoButton({ usdAmount }: { usdAmount: number }) {
-          const merchantWallet = "0x15c12db2334063aefae3b348487aba02d159471b3294065a8f5879dd9e73e24";
+      import { useState, useCallback } from "react";
+      import { Button } from "@/components/ui/button";
+      import { Input } from "@/components/ui/input";
+      import { toast } from "sonner";
+      import { useAuth } from "@clerk/nextjs";
+      import { useWalletWithAuth } from "@/hooks/useWalletWithAuth";
+      import { useTransfer } from "@/hooks/useTransfer";
+      import { useRecordSendTransaction } from "@/hooks/useRecordSendTransaction";
+      import type { WalletData, Chain, ChainToken } from "@chipi-stack/types";
 
-          return (
-            <Link
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block w-fit transform rounded-xl border-2 border-black bg-white px-6 py-3 text-center text-lg font-semibold text-black shadow-[4px_4px_0px_rgba(251,146,60,1)] transition-all duration-200 ease-in-out hover:-translate-y-1 hover:shadow-[6px_6px_0px_rgba(251,146,60,1)]"
-              href={`https://pay.chipipay.com?starknetWallet=${merchantWallet}&usdAmount=${usdAmount}`}
+      export function PayCryptoButton({
+        costumerWallet,
+        amountUsd,
+        onSuccess,
+        label,
+      }: {
+        costumerWallet: WalletData;
+        amountUsd: number;
+        onSuccess?: (txHash: string) => void;
+        label: string;
+      }) {
+        const { getToken } = useAuth();
+        const { wallet: senderWallet } = useWalletWithAuth();
+        const { transferAsync } = useTransfer();
+        const { recordSendTransactionAsync } = useRecordSendTransaction();
+
+        const [pin, setPin] = useState("");
+        const [busy, setBusy] = useState(false);
+
+        const runPayment = useCallback(
+          async (pin: string) => {
+            const jwtToken = await getToken();
+            if (!jwtToken) {
+              toast.error("No token found");
+              return;
+            }
+
+            const merchant = process.env.NEXT_PUBLIC_MERCHANT_WALLET || "";
+            if (!merchant) {
+              toast.error("Merchant wallet is not configured");
+              return;
+            }
+
+            try {
+              setBusy(true);
+              const transactionHash = await transferAsync({
+                params: {
+                  amount: amountUsd.toString(),
+                  encryptKey: pin,
+                  wallet: costumerWallet,
+                  token: "USDC",
+                  recipient: merchant,
+                },
+                bearerToken: jwtToken,
+              });
+
+              const recordSendTransactionParams = {
+                transactionHash,
+                chain: "STARKNET" as Chain,
+                expectedSender: senderWallet?.publicKey || "",
+                expectedRecipient: merchant,
+                expectedToken: "USDC" as ChainToken,
+                expectedAmount: amountUsd.toString(),
+              };
+
+              const sendTx = await recordSendTransactionAsync({
+                params: recordSendTransactionParams,
+                bearerToken: jwtToken,
+              });
+
+              console.log("successful record send transaction:", sendTx);
+              toast.success("Pago completado ✨", { position: "bottom-center" });
+              onSuccess?.(transactionHash);
+            } catch (err: unknown) {
+              console.error("Error in pay with chipi button:", err);
+              const msg =
+                (typeof err === "string" && err) ||
+                (err instanceof Error ? err.message : "Something went wrong. Please try again.");
+              toast.error(msg, { position: "bottom-center" });
+            } finally {
+              setBusy(false);
+            }
+          },
+          [
+            amountUsd,
+            costumerWallet,
+            getToken,
+            recordSendTransactionAsync,
+            senderWallet?.publicKey,
+            transferAsync,
+            onSuccess,
+          ]
+        );
+
+        return (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            <label className="font-medium">{label}</label>
+            <Input
+              type="password"
+              placeholder="Enter PIN"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+            />
+            <Button
+              className="w-full"
+              disabled={busy}
+              onClick={() => runPayment(pin)}
             >
-              💰 Pay with Crypto
-            </Link>
-          );
-        }
+              {busy ? "Processing..." : "Pay Now"}
+            </Button>
+          </div>
+        );
+      }
+
         ```
 
         <Tip>
@@ -71,48 +167,7 @@ description: Add a crypto payment button to your website in minutes
         </Tip>
       </Tab>
 
-      <Tab title="HTML/No Code">
-        Perfect for static websites, Webflow, Wix, WordPress, or any no-code platform.
-
-        ### Basic button (customer chooses amount):
-        ```html
-        <a
-          href="https://pay.chipipay.com?starknetWallet=0x15c12db2334063aefae3b348487aba02d159471b3294065a8f5879dd9e73e24"
-          target="_blank"
-              rel="noopener noreferrer"
-          style="
-            display: inline-block;
-            padding: 12px 24px;
-            font-size: 18px;
-            font-weight: 600;
-            color: #222;
-            background: #fff;
-            border: 2px solid #222;
-            border-radius: 12px;
-            box-shadow: 4px 4px 0px rgba(251,146,60,1);
-            text-decoration: none;
-                transition: all 0.2s ease-in-out;
-                cursor: pointer;
-          "
-              onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='6px_6px_0px rgba(251,146,60,1)'"
-              onmouseout="this.style.transform='none'; this.style.boxShadow='4px_4px_0px rgba(251,146,60,1)'"
-        >
-              💰 Pay with Crypto
-        </a>
-        ```
-      </Tab>
     </Tabs>
-  </Step>
-
-  <Step title="Test your integration" titleSize="h2">
-    <Warning>
-    Currently, ChipiPay only supports **USDC payments on the Starknet network**. Make sure your users have USDC tokens in their Starknet wallet.
-    </Warning>
-
-    1. Click your newly added payment button
-    2. You'll be redirected to [pay.chipipay.com](https://pay.chipipay.com)
-    3. Complete a transaction using USDC on Starknet
-    4. Verify you receive the payment notification (webhook or email)
   </Step>
 
   <Step title="Handle webhook notifications" titleSize="h2">
