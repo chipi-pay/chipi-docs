@@ -54,6 +54,13 @@
               "sdk/nextjs/hooks/use-stake-vesu-usdc",
               "sdk/nextjs/hooks/use-withdraw-vesu-usdc"
             ]
+          },
+          {
+            "group": "MCP",
+            "icon": "code",
+            "pages": [
+              "sdk/nextjs/set-up-mcp-server"
+            ]
           }
         ]
       },
