@@ -56,16 +56,11 @@ import GetPublicKeySnippet from '/snippets/dashboard/get-public-key.snippet.mdx'
 
     interface CreateWalletParams {
       encryptKey: string;
+      externalUserId: string;
       apiPublicKey: string;
       bearerToken: string;
-      nodeUrl: string;
     }
 
-    interface CreateWalletResponse {
-      success: boolean;
-      wallet: WalletData;
-      txHash: string;
-    }
 
     // Backend URL constant
     const BACKEND_URL = "https://api.chipipay.com/v1";
@@ -76,9 +71,9 @@ import GetPublicKeySnippet from '/snippets/dashboard/get-public-key.snippet.mdx'
     ): Promise<CreateWalletResponse> => {
       // console.log("create wallet Params: ", params);
       try {
-        const { encryptKey, apiPublicKey, bearerToken, nodeUrl } = params;
+        const { encryptKey, apiPublicKey, bearerToken } = params;
        
-        const provider = new RpcProvider({ nodeUrl: nodeUrl });
+        const provider = new RpcProvider({ nodeUrl: "https://starknet-mainnet.infura.io/v3/YOUR_PROJECT_ID" });
         // Generating the private key with Stark Curve
         const privateKeyAX = stark.randomAddress();
         const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKeyAX);
@@ -220,7 +215,6 @@ import GetPublicKeySnippet from '/snippets/dashboard/get-public-key.snippet.mdx'
       encryptKey: "1234", // This is an encryption key that the user will have to input every time to decrypt the private key
       apiPublicKey: "pk_prod_***", // This is your Chipi Pay public key
       bearerToken: "your-bearer-token", // This is a valid JWT token from your Auth Provider
-      nodeUrl: "https://starknet-mainnet.infura.io/v3/YOUR_PROJECT_ID" // This is the Starknet Mainnet RPC URL
     };
 
     createWallet(params)

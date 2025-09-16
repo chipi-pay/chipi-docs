@@ -48,14 +48,17 @@ await SecureStore.setItemAsync("wallet_pin", pin, {
 
 
       const transferResponse = await transferAsync({
-        encryptKey: pin,
+        params: {
+          encryptKey: pin,
+          wallet: JSON.parse(storedWallet),
+          contractAddress: USDC_CONTRACT,
+          recipient: recipientAddress,
+          amount: amount,
+          decimals: 6,
+        },
         bearerToken: token,
-        wallet: JSON.parse(storedWallet),
-        contractAddress: USDC_CONTRACT,
-        recipient: recipientAddress,
-        amount: amount,
-        decimals: 6,
-      });
+        },
+      );
   ```
 </Step>
 </Steps>

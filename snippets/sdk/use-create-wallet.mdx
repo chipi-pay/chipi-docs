@@ -45,12 +45,19 @@ export function CreateWallet() {
   } = useCreateWallet();
   
   const [pin, setPin] = useState('');
+  const externalUserId = "your-auth-provider-user-id";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const bearerToken = await getBearerToken();
     try {
-      await createWalletAsync({  encryptKey:pin, bearerToken });
+      const wallet = await createWalletAsync({
+        params: {
+          encryptKey: pin,
+          externalUserId,
+        },
+        bearerToken,
+      });
       alert('Wallet created successfully!');
     } catch (err) {
       console.error('Wallet creation failed:', err);

@@ -64,13 +64,15 @@ export function WithdrawForm() {
 
     try {
       await withdrawAsync({
-        encryptKey: form.pin,
-        wallet: {
-          publicKey: "0x123...yourPublicKeyHere",
-          encryptedPrivateKey: "encrypted:key:data"
+        params: {
+          encryptKey: form.pin,
+          wallet: {
+            publicKey: "0x123...yourPublicKeyHere",
+            encryptedPrivateKey: "encrypted:key:data"
+          },
+          amount: form.amount,
+          recipient: form.recipient,
         },
-        amount: form.amount,
-        recipient: form.recipient,
         bearerToken
       });
     } catch (err) {

@@ -62,16 +62,16 @@ export function TransferForm() {
 
     try {
       await transferAsync({
-        params:{
-        amount:form.amount,
-        encryptKey: form.pin,
-        wallet: {
-          publicKey: "0x123...yourPublicKeyHere",
-          encryptedPrivateKey: "encrypted:key:data"
+        params: {
+          amount:form.amount,
+          encryptKey: form.pin,
+          wallet: {
+            publicKey: "0x123...yourPublicKeyHere",
+            encryptedPrivateKey: "encrypted:key:data"
+          },
+          recipient: form.recipient,
         },
-        recipient: form.recipient,
-        },
-        bearerToken:
+        bearerToken,
       });
     } catch (err) {
       console.error('Transfer failed:', err);

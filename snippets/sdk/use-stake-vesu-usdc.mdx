@@ -64,13 +64,15 @@ export function StakeForm() {
 
     try {
       await stakeAsync({
-        encryptKey: form.pin,
-        wallet: {
-          publicKey: "0x123...yourPublicKeyHere",
-          encryptedPrivateKey: "encrypted:key:data"
+        params: {
+          encryptKey: form.pin,
+          wallet: {
+            publicKey: "0x123...yourPublicKeyHere",
+            encryptedPrivateKey: "encrypted:key:data"
+          },
+          amount: form.amount,
+          receiverWallet: form.receiverWallet,
         },
-        amount: form.amount,
-        receiverWallet: form.receiverWallet,
         bearerToken
       });
     } catch (err) {

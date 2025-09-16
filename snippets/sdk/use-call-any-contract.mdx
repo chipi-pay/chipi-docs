@@ -57,17 +57,19 @@ export function GenericContractForm() {
 
     try {
       await callAnyContractAsync({
-        encryptKey: form.pin,
-        wallet: walletData, 
-        contractAddress: "0x...", 
-        calls: [
-          {
-            contractAddress: "0x...", // Target contract address
-            entrypoint: form.entrypoint, 
-            calldata: [form.calldata] 
-          }
-        ],
-        bearerToken: "your-bearer-token"
+        params: {
+          encryptKey: form.pin,
+          wallet: walletData, 
+          contractAddress: "0x...", 
+          calls: [
+            {
+              contractAddress: "0x...", // Target contract address
+              entrypoint: form.entrypoint, 
+              calldata: [form.calldata] 
+            }
+          ],
+        },
+        bearerToken,
       });
     } catch (err) {
       console.error('Contract call failed:', err);

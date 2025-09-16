@@ -28,7 +28,7 @@ Returns an object containing:
 - `isLoading`: Boolean indicating if the operation is in progress
 - `error`: Any error that occurred during the process
 
-## Example Implementation
+## Example Implementation for Approving VESU
 
 ```typescript
 'use client'
@@ -59,16 +59,18 @@ export function ApproveForm() {
 
     try {
       await approveAsync({
-        encryptKey: form.pin,
-        wallet: {
-          publicKey: wallet.publicKey,
-          encryptedPrivateKey: wallet.encryptedPrivateKey
+        params: {
+            encryptKey: form.pin,
+          wallet: {
+            publicKey: wallet.publicKey,
+            encryptedPrivateKey: wallet.encryptedPrivateKey
+          },
+          contractAddress: VESU_CONTRACT,
+          spender: VESU_CONTRACT, // Authorizing VESU contract
+          amount: form.amount,
+          decimals: 18
         },
         bearerToken,
-        contractAddress: VESU_CONTRACT,
-        spender: VESU_CONTRACT, // Authorizing VESU contract
-        amount: form.amount,
-        decimals: 18
       });
     } catch (err) {
       console.error('Approval failed:', err);
