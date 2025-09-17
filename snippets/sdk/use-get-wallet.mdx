@@ -1,0 +1,77 @@
+---
+title: 'useGetWallet'
+description: 'This hook retrieves a wallet by an external user ID. Only an authenticated user can access and view their own wallet.'
+---
+
+## Usage
+
+```typescript
+const { 
+  getWalletAsync, 
+  useGetWallet,
+  data, 
+  isLoading, 
+  error 
+} = useGetWallet();
+```
+
+### Parameters
+
+- `externalUserId` (string): userId from your external provider
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns an object containing:
+
+- `useGetWallet`: Function to trigger token transfer
+- `transferData`: Transaction hash of the transfer
+- `isLoading`: Boolean indicating if the operation is in progress
+- `error`: Any error that occurred during the process
+
+## Example Implementation
+
+```typescript
+ import { useQuery } from "@tanstack/react-query";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useGetWallet } from "@chipi-stack/nextjs";
+
+export function useWalletWithAuth() {
+  const { isLoaded, user } = useUser();
+  const { getToken, isLoaded: isUserLoaded } = useAuth();
+  const { getWalletAsync } = useGetWallet();
+  const query = useQuery({
+    queryKey: ["wallet"],
+    enabled: isLoaded && isUserLoaded && !!user?.id ,
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token || !user?.id) throw new Error("Missing auth data");
+      const wallet = await getWalletAsync({
+        externalUserId: user.id,
+        bearerToken: token,
+      });
+      if (!wallet) throw new Error("Wallet not found");
+      return wallet;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: false,
+  });
+
+  return {
+    wallet: query.data,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
+}
+                        
+```
+
+<Warning>
+  <Notice type="info">
+  </Notice>
+   Chipi never stores your decrypted sensitive data. All private keys and authentication tokens remain secure and are never accessible to Chipi servers.
+</Warning>
+
