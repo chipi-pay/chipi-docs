@@ -52,7 +52,8 @@
               "sdk/nextjs/hooks/use-create-wallet",
               "sdk/nextjs/hooks/use-transfer",
               "sdk/nextjs/hooks/use-stake-vesu-usdc",
-              "sdk/nextjs/hooks/use-withdraw-vesu-usdc"
+              "sdk/nextjs/hooks/use-withdraw-vesu-usdc",
+              "sdk/nextjs/hooks/use-get-wallet"
             ]
           },
           {
@@ -101,7 +102,8 @@
               "sdk/expo/hooks/use-withdraw-vesu-usdc",
               "sdk/expo/hooks/use-transfer",
               "sdk/expo/hooks/use-record-transaction",
-              "sdk/expo/hooks/use-call-any-contract"
+              "sdk/expo/hooks/use-call-any-contract",
+              "sdk/expo/hooks/use-get-wallet"
             ]
           }
         ]

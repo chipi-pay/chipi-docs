@@ -1,13 +1,15 @@
 ---
-title: "Set Up MCP Server "
-description: "This guide explains how to set up and use an MCP (Model Component Protocol) server with our deployed registry. MCP enables you to integrate custom UI components, utilities, and APIs into your project using standardized registries."
+title: "Set Up the Chipi MCP Server"
+description: "This guide walks you through setting up and using the Chipi MCP (Model Component Protocol) server. With it, you can seamlessly integrate Chipi’s UI components, utilities, and APIs into your project via standardized registries."
 ---
 
 ## Prerequisites
 - Node.js
+- A project already initialized with Next.js
+- An Account at [ChipiPay Dashboard](https://dashboard.chipipay.com/)
+- A created project in [clerk](https://clerk.com/)
 - npm or pnpm as a package manager
-- A project with Next.js (or your framework of choice) already initialized
-- Tailwind CSS configured (if you plan to use Shadcn-style components)
+- Tailwind CSS configured 
 
 
 <Note>
@@ -20,14 +22,14 @@ description: "This guide explains how to set up and use an MCP (Model Component 
 <Steps>
 
 <Step title="Configure MCP in Cursor" titleSize="h2">
- Click the button below to install the Chipi MCP server in your Cursor 
+Click the button below to install the Chipi MCP server in Cursor.
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=chipiMcp&config=eyJjb21tYW5kIjoibnB4IG1jcC1yZW1vdGUgaHR0cHM6Ly9tY3AuY2hpcGlwYXkuY29tL21jcCIsImVudiI6e319)
 
 </Step>
 
 
 
-<Step title="Inside your project, Create a components.json file using this command" titleSize="h2">
+<Step title="Inside your project, create a components.json file by running:" titleSize="h2">
 
 <CodeGroup>
     ```bash npm
@@ -42,12 +44,12 @@ description: "This guide explains how to set up and use an MCP (Model Component 
 </Step>
 
 
-<Step title="Add chipi to your registries section in components.json" titleSize="h2">
+<Step title="Add chipi to the registries section in components.json" titleSize="h2">
 
 
    ```json
     "registries": {
-    "@chipi": "https://chipi-v0-shadcn.vercel.app/r/{name}.json"
+    "@chipi": "https://mcp.chipipay.com/r/{name}.json"
   }
    ```
 
@@ -57,11 +59,11 @@ description: "This guide explains how to set up and use an MCP (Model Component 
 Once the Chipi MCP server is installed, Cursor acts as your assistant for working with Chipi.
 You can now:
 
-- 🔍 **Discover** what’s in the registry — *“What components are available in Chipi?”*  
-- 📥 **Install** components into your project — *“Add the PayCryptoButton to my project.”*  
-- 🛠️ **Get usage examples** — *“Show me how to use Chipi’s base provider with Next.js.”*  
+- 🔍 **Discover** what’s in the registry — *“What components are available in chipiMcp list all of them”*  
+- 📥 **Install** all components and hooks into your project — *“Install all components, hooks, and utilities from chipiMcp to set up a fully custom crypto-enabled app. ”*  
+- 🛠️ **Get usage examples** — *“Show me how to use Chipi’s Baseprovider with Next.js.”*  
 - 📚 **Read documentation** — *“What props does PayCryptoButton accept?”*  
-- 🧪 **Debug your setup** — *“Check if my Chipi Pay config is correct.”*  
+- 🧪 **Debug your setup** — *“Check if my Chipi Pay config is correct, check if I am using and installing all correct dependecies from chipiMcp and chipi registry.json”*  
 
 This means you don’t have to memorize commands or file paths — just ask Cursor, and it will fetch, install, and explain Chipi components directly in your project.
 
@@ -74,8 +76,15 @@ This means you don’t have to memorize commands or file paths — just ask Curs
 - **Components not found**: Ensure the MCP server is running.
 - **Styling issues**: Make sure Tailwind CSS is properly configured.
 
+<Warning>
+If you’re using an older version of Node.js or run into issues adding the MCP registry in Cursor settings, you can ask Cursor to fetch the registry manually by pasting this curl command into your prompt
+</Warning>
+
+ ```bash
+curl -s "https://mcp.chipipay.com/r/registry.json" | jq '.items[] | {name, title, type}'
+    ```
 
 <Note>
-  For more information about MCP Servers in Cursor, see the <a href="https://docs.cursor.com/en/context/mcp" target="_blank" rel="noopener noreferrer">Cursor MCP documentation</a>.
+  For more information about MCP Servers in Cursor, see <a href="https://docs.cursor.com/en/context/mcp" target="_blank" rel="noopener noreferrer">Cursor MCP documentation</a>.
 </Note>
 
