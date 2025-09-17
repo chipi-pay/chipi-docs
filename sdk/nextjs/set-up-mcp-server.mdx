@@ -15,25 +15,17 @@ description: "This guide explains how to set up and use an MCP (Model Component 
 </Note>
 
 
-## Configure MCP in Your Project
+## Setup the Chipi MCP Server
 <Steps>
-<Step title="Configure MCP in Your Project" titleSize="h2">
- Click the button below to install the Chipi MCP server in your project 
-<a href="https://cursor.com/en/install-mcp?name=chipi-registry&config=eyJjb21tYW5kIjoibnB4IC15IEBtb2RlbGNvbnRleHRwcm90b2NvbC9zZXJ2ZXItaHR0cCBodHRwczovL2NoaXBpLXYwLXNoYWRjbi52ZXJjZWwuYXBwL2FwaS9tY3AifQ%3D%3D"><img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Add chipi-registry MCP server to Cursor" height="32" />
-
-</a>
-<Warning>
- If the Cursor installation fails, you can manually check available components using the registry URL:
-</Warning>
- ```bash
-  curl -s "https://chipi-v0-shadcn.vercel.app/r/registry.json" | jq '.items[] | {name, title, type}'
-  ```
+<Step title="Configure MCP in Cursor" titleSize="h2">
+ Click the button below to install the Chipi MCP server in your Cursor 
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=chipiMcp&config=eyJjb21tYW5kIjoibnB4IG1jcC1yZW1vdGUgaHR0cHM6Ly9jaGlwaS12MC1zaGFkY24udmVyY2VsLmFwcC9tY3AiLCJlbnYiOnt9fQ%3D%3D)
 
 </Step>
 
 
 
-<Step title="Create a components.json file using this command inside your project" titleSize="h2">
+<Step title="Inside your project, Create a components.json file using this command" titleSize="h2">
 
 <CodeGroup>
     ```bash npm
