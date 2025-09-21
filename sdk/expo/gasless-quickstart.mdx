@@ -71,7 +71,7 @@ pnpm add @chipi-stack/expo@latest
 1. Add your **Public Key** to your environment variables.
 
 ```bash
-EXPO_PUBLIC_CHIPI_PUBLIC_KEY=pk_prod_xxxx
+EXPO_PUBLIC_CHIPI_API_KEY=pk_prod_xxxx
 ```
 
 2. Wrap your main `_layout.tsx` with the `ChipiProvider` component.
@@ -81,7 +81,7 @@ EXPO_PUBLIC_CHIPI_PUBLIC_KEY=pk_prod_xxxx
 
 import { ChipiProvider } from "@chipi-stack/expo";
 
-const API_PUBLIC_KEY = process.env.EXPO_PUBLIC_CHIPI_PUBLIC_KEY;
+const API_PUBLIC_KEY = process.env.EXPO_PUBLIC_CHIPI_API_KEY;
 if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
 
 
