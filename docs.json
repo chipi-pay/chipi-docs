@@ -109,6 +109,41 @@
         ]
       },
       {
+        "dropdown": "React",
+        "icon": "atom",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "sdk/react/introduction"
+            ]
+          },
+          {
+            "group": "Gasless",
+            "icon": "gas-pump",
+            "pages": [
+              "sdk/react/gasless-quickstart",
+              "sdk/react/gasless-clerk-setup"
+            ]
+          },
+          {
+            "group": "SDK Hooks",
+            "icon": "fish",
+            "pages": [
+              "sdk/react/hooks/use-create-wallet",
+              "sdk/react/hooks/use-approve",
+              "sdk/react/hooks/use-stake-vesu-usdc",
+              "sdk/react/hooks/use-withdraw-vesu-usdc",
+              "sdk/react/hooks/use-transfer",
+              "sdk/react/hooks/use-record-transaction",
+              "sdk/react/hooks/use-call-any-contract",
+              "sdk/react/hooks/use-get-wallet"
+            ]
+          }
+        ]
+      },
+      {
         "dropdown": "API Reference",
         "icon": "code",
         "groups": [

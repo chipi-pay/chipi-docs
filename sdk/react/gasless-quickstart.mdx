@@ -1,0 +1,114 @@
+---
+title: "Quickstart"
+description: "Quick setup guide for gasless transactions with Chipi SDK in React applications"
+---
+
+<Steps>
+  <Step title="Configure your Authentication" titleSize="h2">
+
+You'll need to [add the JWKS Endpoint](https://dashboard.chipipay.com/configure/jwks-endpoint) from your Auth Provider to authenticate gasless transactions.
+
+<Tip>
+  With this JWKS Endpoint setup, you can now run secure code in your frontend
+  using a rotating JWT token.
+</Tip>
+
+### Getting your JWKS Endpoint
+
+For these common Auth Providers, you can get your JWKS Endpoint like this:
+
+<Tabs>
+  <Tab title="Clerk">
+  1. Go to your [API Keys](https://dashboard.clerk.com/last-active?path=api-keys)
+
+  2. Copy your **Jwks Url** and paste it into the JWKS Endpoint field in your Chipi Dashboard.
+  </Tab>
+
+  <Tab title="Firebase">
+  We have an active PR for Firebase and will be available by November 2025
+   so stay tuned!
+
+  </Tab>
+
+</Tabs>
+
+</Step>
+
+<Step title="Get your Public Key" titleSize="h2">
+
+Now go to your [Api Keys](https://dashboard.chipipay.com/configure/api-keys) and click on your project.
+
+Which will give you access to your **Public Key** (`pk_prod_xxxx`). Keep this handy as you'll need it to initialize the SDK.
+
+<Info>
+ You won't need the Secret Key (`sk_prod_xxxx`) for now.
+</Info>
+
+</Step>
+
+<Step title="Install the SDK" titleSize="h2">
+
+<CodeGroup>
+
+```bash npm
+npm install @chipi-stack/chipi-react
+```
+
+```bash yarn
+yarn add @chipi-stack/chipi-react
+```
+
+```bash pnpm
+pnpm add @chipi-stack/chipi-react
+```
+
+</CodeGroup>
+
+</Step>
+
+<Step title="Initialize the SDK" titleSize="h2">
+
+1. Add your **Public Key** to your environment variables.
+
+```bash
+# Vite uses VITE_ prefix for environment variables
+VITE_CHIPI_API_KEY=pk_prod_xxxx
+```
+
+
+
+2. In your main `App.tsx` or `index.tsx`, wrap your app with the `ChipiProvider` component as shown below:
+
+```tsx
+// App.tsx
+
+import { ChipiProvider } from "@chipi-stack/chipi-react";
+
+export default function App() {
+  return (
+    <ChipiProvider>{/* Your app components */}</ChipiProvider>
+  );
+}
+```
+
+</Step>
+
+<Step title="Celebrate & Learn More!" titleSize="h2">
+
+That's it! You should now have an initial working version of Chipi Pay integrated into your application. You can now start implementing various features like:
+
+- Wallet Creations
+- Sending tokens
+- Signing transactions
+- and more!
+
+<Tip>
+  To quickly test the integration, you can use our [Test Mode](/test-mode) in
+  development.
+</Tip>
+
+Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) to ask us anything on your mind.
+
+</Step>
+
+</Steps>
