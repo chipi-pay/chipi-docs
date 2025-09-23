@@ -31,7 +31,7 @@ First, install the required packages:
 
 ```bash
 # Install Chipi Pay SDK
-npx expo install @chipi-stack/expo
+npx expo install @chipi-stack/chipi-expo
 
 # Install Clerk and authentication packages
 npx expo install @clerk/clerk-expo expo-secure-store expo-web-browser
@@ -82,7 +82,7 @@ EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 ```typescript
 // App.tsx
 import { ClerkProvider } from "@clerk/clerk-expo";
-import { ChipiProvider } from "@chipi-stack/expo";
+import { ChipiProvider } from "@chipi-stack/chipi-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function App() {
@@ -135,7 +135,7 @@ export default function App() {
 // utils/secureStorage.ts
 import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
-import type { WalletData } from '@chipi-stack/expo';
+import type { WalletData } from '@chipi-stack/chipi-expo';
 
 export const saveWalletStorage = async (pin: string, walletData: WalletData) => {
   await SecureStore.setItemAsync(
