@@ -8,7 +8,7 @@ description: 'Creates a new Argent-compatible wallet on StarkNet. This hook depl
 ```typescript
 const { 
   createWalletAsync, 
-  createWalletResponse, 
+  data, 
   isLoading, 
   error 
 } = useCreateWallet();
@@ -24,7 +24,7 @@ const {
 Returns an object containing:
 
 - `createWalletAsync`: Function to trigger wallet creation
-- `createWalletResponse`: Object with deployment results
+- `data`: Object with deployment results
 - `isLoading`: Boolean indicating if the operation is in progress
 - `error`: Any error that occurred during the process
 
@@ -34,7 +34,7 @@ Returns an object containing:
 export function CreateWallet() {
   const { 
     createWalletAsync, 
-    createWalletResponse, 
+    data, 
     isLoading, 
     error 
   } = useCreateWallet();
@@ -93,12 +93,12 @@ export function CreateWallet() {
         </div>
       )}
 
-      {createWalletResponse && (
+      {data && (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold">Wallet Details</h3>
             <a
-              href={`https://starkscan.co/contract/${createWalletResponse.accountAddress}`}
+              href={`https://starkscan.co/contract/${data.wallet.publicKey}`}
               target="_blank"
               rel="noopener"
               className="text-green-600 hover:text-green-800 text-sm flex items-center gap-1"
@@ -113,13 +113,13 @@ export function CreateWallet() {
             <p className="text-sm">
               <span className="font-medium">Address:</span> 
               <span className="ml-2 font-mono break-all">
-                {createWalletResponse.accountAddress}
+                {data.wallet.publicKey}
               </span>
             </p>
             <p className="text-sm">
               <span className="font-medium">TX Hash:</span> 
               <span className="ml-2 font-mono break-all">
-                {createWalletResponse.txHash}
+                {data.txHash}
               </span>
             </p>
           </div>
