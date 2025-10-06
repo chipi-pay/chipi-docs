@@ -26,7 +26,8 @@
             "icon": "gas-pump",
             "pages": [
               "sdk/nextjs/gasless-quickstart",
-              "sdk/nextjs/gasless-clerk-setup"
+              "sdk/nextjs/gasless-clerk-setup",
+              "sdk/nextjs/gasless-supabase-setup"
             ]
           },
           {
