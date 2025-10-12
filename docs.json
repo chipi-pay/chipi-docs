@@ -145,6 +145,52 @@
         ]
       },
       {
+        "dropdown": "Other Frontend Frameworks",
+        "icon": "code-branch",
+        "groups": [
+          {
+            "group": "Quickstart",
+            "icon": "bolt",
+            "pages": [
+              "sdk/other-frontend/quickstart"
+            ]
+          },
+          {
+            "group": "Methods",
+            "icon": "code",
+            "pages": [
+              "sdk/other-frontend/methods/create-wallet",
+              "sdk/other-frontend/methods/get-wallet",
+              "sdk/other-frontend/methods/transfer",
+              "sdk/other-frontend/methods/call-any-contract"
+            ]
+          }
+        ]
+      },
+      {
+        "dropdown": "Backend",
+        "icon": "server",
+        "groups": [
+          {
+            "group": "Quickstart",
+            "icon": "bolt",
+            "pages": [
+              "sdk/backend/quickstart"
+            ]
+          },
+          {
+            "group": "Methods",
+            "icon": "code",
+            "pages": [
+              "sdk/backend/methods/create-wallet",
+              "sdk/backend/methods/get-wallet",
+              "sdk/backend/methods/transfer",
+              "sdk/backend/methods/call-any-contract"
+            ]
+          }
+        ]
+      },
+      {
         "dropdown": "API Reference",
         "icon": "code",
         "groups": [

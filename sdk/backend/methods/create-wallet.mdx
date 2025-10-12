@@ -1,0 +1,87 @@
+---
+title: 'createWallet'
+description: 'Creates a new Argent-compatible wallet on StarkNet. This method deploys the wallet contract behind the scenes and uses Avnus gasless to sponsor gas fees, resulting in a frictionless onboarding experience.'
+---
+
+## Usage
+
+```typescript
+const newWallet = await serverClient.createWallet({
+  params: {
+    encryptKey: "user-secure-pin",
+    externalUserId: "your-user-id-123",
+  },
+});
+```
+
+### Parameters
+
+- `encryptKey` (string): A user-defined code or password used to encrypt the wallet's private key.
+- `externalUserId` (string): Your application's unique identifier for the user
+
+### Return Value
+
+Returns a Promise that resolves to an object containing:
+
+- `wallet`: Object with `publicKey` and `encryptedPrivateKey`
+- `txHash`: Transaction hash of the wallet deployment
+
+## Example Implementation
+
+```typescript
+import { ChipiServerSDK } from "@chipi-stack/backend";
+
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: process.env.CHIPI_PUBLIC_KEY!,
+  apiSecretKey: process.env.CHIPI_SECRET_KEY!,
+});
+
+async function createUserWallet(userId: string, userPin: string) {
+  try {
+    const newWallet = await serverClient.createWallet({
+      params: {
+        encryptKey: userPin,
+        externalUserId: userId,
+      },
+    });
+
+    console.log('Wallet created successfully!');
+    console.log('Address:', newWallet.wallet.publicKey);
+    console.log('Deployment TX:', newWallet.txHash);
+
+    // Store wallet data in your database
+    await saveWalletToDatabase({
+      userId,
+      publicKey: newWallet.wallet.publicKey,
+      encryptedPrivateKey: newWallet.wallet.encryptedPrivateKey,
+      deploymentTxHash: newWallet.txHash,
+    });
+
+    return newWallet;
+  } catch (error) {
+    console.error('Wallet creation failed:', error);
+    throw error;
+  }
+}
+
+// Usage example
+async function onboardNewUser(userId: string, pin: string) {
+  const wallet = await createUserWallet(userId, pin);
+  
+  // Verify deployment on StarkScan
+  const contractUrl = `https://starkscan.co/contract/${wallet.wallet.publicKey}`;
+  console.log('View contract:', contractUrl);
+  
+  return wallet;
+}
+```
+
+
+<Note>
+  Wallet creation is free! Gas fees are covered by our gasless integration.
+</Note>
+
+## Related Methods
+
+- [getWallet](/sdk/backend/methods/get-wallet) - Retrieve existing wallet information
+- [transfer](/sdk/backend/methods/transfer) - Send tokens from the created wallet

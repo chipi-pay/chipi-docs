@@ -1,0 +1,158 @@
+---
+title: "Not using React? Quickstart"
+description: "Quick setup guide for the Chipi Browser SDK - client-side wallet management for Vue, Angular, Svelte, and vanilla JavaScript"
+---
+
+
+<Warning>
+  The Browser SDK is designed for client-side use only. Never expose your secret API key in frontend code - only use your public key.
+</Warning>
+
+<Steps>
+  <Step title="Install the Browser SDK" titleSize="h2">
+
+<CodeGroup>
+
+```bash npm
+npm install @chipi-stack/backend
+```
+
+```bash yarn
+yarn add @chipi-stack/backend
+```
+
+```bash pnpm
+pnpm add @chipi-stack/backend
+```
+
+</CodeGroup>
+
+  </Step>
+
+  <Step title="Get your Public API Key" titleSize="h2">
+
+1. Go to your [API Keys](https://dashboard.chipipay.com/configure/api-keys) in the Chipi Dashboard
+2. Copy your **Public Key** (`pk_prod_xxxx`)
+
+<Info>
+  You only need the Public Key for frontend applications. Never use your Secret Key in client-side code.
+</Info>
+
+  </Step>
+
+  <Step title="Initialize the SDK" titleSize="h2">
+
+Create a new instance of the ChipiBrowserSDK with your public API key:
+
+```typescript
+import { ChipiBrowserSDK } from "@chipi-stack/backend";
+
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: "pk_prod_your_public_key",
+});
+```
+
+  </Step>
+
+  <Step title="Handle Authentication" titleSize="h2">
+
+The Browser SDK requires a bearer token for authentication. You'll need to obtain this from your authentication provider:
+
+```typescript
+// Example with your auth system
+async function getBearerToken() {
+  // Replace with your actual auth implementation
+  const token = await yourAuthProvider.getToken();
+  return token;
+}
+```
+
+  </Step>
+
+  <Step title="Create Your First Wallet" titleSize="h2">
+
+Now you can create a wallet for your users:
+
+```typescript
+const bearerToken = await getBearerToken();
+
+const newWallet = await browserClient.createWallet({
+  params: {
+    encryptKey: "user-secure-pin",
+    externalUserId: "your-user-id-123",
+  },
+  bearerToken: bearerToken,
+});
+
+console.log('New wallet created:', newWallet);
+// Output: { wallet: { publicKey: "0x...", encryptedPrivateKey: "..." }, txHash: "0x..." }
+```
+
+  </Step>
+
+  <Step title="Make Your First Transfer" titleSize="h2">
+
+Transfer tokens between wallets:
+
+```typescript
+const bearerToken = await getBearerToken();
+
+const transferResult = await browserClient.transfer({
+  params: {
+    encryptKey: "user-secure-pin",
+    wallet: {
+      publicKey: newWallet.wallet.publicKey,
+      encryptedPrivateKey: newWallet.wallet.encryptedPrivateKey,
+    },
+    amount: "100",
+    token: "USDC",
+    recipient: "0x1234567890abcdef...",
+  },
+  bearerToken: bearerToken,
+});
+
+console.log('Transfer completed:', transferResult);
+```
+
+  </Step>
+
+  <Step title="Environment Variables (Recommended)" titleSize="h2">
+
+For production applications, store your API key as an environment variable:
+
+```bash
+# .env
+VITE_CHIPI_PUBLIC_KEY=pk_prod_your_public_key  # For Vite
+NEXT_PUBLIC_CHIPI_API_KEY=pk_prod_your_public_key  # For Next.js
+REACT_APP_CHIPI_API_KEY=pk_prod_your_public_key  # For Create React App
+```
+
+Then initialize the SDK:
+
+```typescript
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: process.env.VITE_CHIPI_PUBLIC_KEY, // or your framework's env var
+});
+```
+
+  </Step>
+
+</Steps>
+
+## Next Steps
+
+Now that you have the basic setup working, explore more advanced features:
+
+- **[Wallet Management](/sdk/other-frontend/wallets)** - Complete wallet operations
+- **[API Reference](/sdk/api/introduction)** - Full API documentation
+
+## Security Best Practices
+
+<Warning>
+  - Secure your bearer tokens properly
+  - Validate user inputs before making API calls
+</Warning>
+
+<Tip>
+  Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) for support and to connect with other developers.
+</Tip>

@@ -1,0 +1,103 @@
+---
+title: 'transfer'
+description: 'Transfers tokens from a user wallet to another address. Uses Avnus gasless to cover gas fees, making transactions frictionless for your users.'
+---
+
+## Usage
+
+```typescript
+const transferResult = await serverClient.transfer({
+  params: {
+    encryptKey: "user-secure-pin",
+    wallet: {
+      publicKey: "0x123...yourPublicKeyHere",
+      encryptedPrivateKey: "encrypted:key:data"
+    },
+    amount: "100",
+    token: "USDC",
+    recipient: "0x1234567890abcdef...",
+  },
+});
+```
+
+### Parameters
+
+- `encryptKey` (string): PIN used to decrypt the private key
+- `wallet` (WalletData): Object with publicKey and encryptedPrivateKey
+- `amount` (string | number): Transfer amount
+- `token` (string): Token type (e.g., "USDC")
+- `recipient` (string): Destination wallet address
+- `decimals` (number, optional): Token decimals (default: 18)
+
+### Return Value
+
+Returns a Promise that resolves to a transaction hash string.
+
+## Example Implementation
+
+```typescript
+import { ChipiServerSDK } from "@chipi-stack/backend";
+
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: process.env.CHIPI_PUBLIC_KEY!,
+  apiSecretKey: process.env.CHIPI_SECRET_KEY!,
+});
+
+async function transferTokens(
+  senderWallet: { publicKey: string; encryptedPrivateKey: string },
+  recipientAddress: string,
+  amount: string,
+  userPin: string
+) {
+  try {
+    const transferResult = await serverClient.transfer({
+      params: {
+        encryptKey: userPin,
+        wallet: senderWallet,
+        amount: amount,
+        token: "USDC",
+        recipient: recipientAddress,
+      },
+    });
+
+    console.log('Transfer completed successfully!');
+    console.log('Transaction hash:', transferResult);
+    
+    return transferResult;
+  } catch (error) {
+    console.error('Transfer failed:', error);
+    throw error;
+  }
+}
+
+// Usage example
+async function sendUSDC(userId: string, recipientAddress: string, amount: string, pin: string) {
+  // First, get the user's wallet
+  const wallet = await serverClient.getWallet({
+    externalUserId: userId,
+  });
+
+  // Then perform the transfer
+  const txHash = await transferTokens(
+    wallet,
+    recipientAddress,
+    amount,
+    pin
+  );
+
+  console.log(`Sent ${amount} USDC to ${recipientAddress}`);
+  console.log(`Transaction: https://starkscan.co/tx/${txHash}`);
+  
+  return txHash;
+}
+```
+
+
+<Danger>
+  Always verify recipient addresses. Transfers on StarkNet are irreversible.
+</Danger>
+
+## Related Methods
+
+- [getWallet](/sdk/backend/methods/get-wallet) - Get wallet information before transfers
+- [callAnyContract](/sdk/backend/methods/call-any-contract) - For custom contract interactions

@@ -1,0 +1,107 @@
+---
+title: 'transfer'
+description: 'Transfers tokens from a user wallet to another address. Uses Avnus gasless to cover gas fees, making transactions frictionless for your users.'
+---
+
+## Usage
+
+```typescript
+const bearerToken = await getBearerToken(); // Your auth implementation
+
+const transferResult = await browserClient.transfer({
+  params: {
+    encryptKey: "user-secure-pin",
+    wallet: {
+      publicKey: "0x123...yourPublicKeyHere",
+      encryptedPrivateKey: "encrypted:key:data"
+    },
+    amount: "100",
+    token: "USDC",
+    recipient: "0x1234567890abcdef...",
+  },
+  bearerToken: bearerToken,
+});
+```
+
+### Parameters
+
+- `encryptKey` (string): PIN used to decrypt the private key
+- `wallet` (WalletData): Object with publicKey and encryptedPrivateKey
+- `amount` (string | number): Transfer amount
+- `token` (string): Token type (e.g., "USDC")
+- `recipient` (string): Destination wallet address
+- `decimals` (number, optional): Token decimals (default: 18)
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns a Promise that resolves to a transaction hash string.
+
+## Example Implementation
+
+```typescript
+import { ChipiBrowserSDK } from "@chipi-stack/backend";
+
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: process.env.VITE_CHIPI_PUBLIC_KEY, // or your framework's env var
+});
+
+async function transferTokens(
+  senderWallet: { publicKey: string; encryptedPrivateKey: string },
+  recipientAddress: string,
+  amount: string,
+  userPin: string
+) {
+  try {
+    const bearerToken = await getBearerToken(); // Your auth implementation
+    
+    const transferResult = await browserClient.transfer({
+      params: {
+        encryptKey: userPin,
+        wallet: senderWallet,
+        amount: amount,
+        token: "USDC",
+        recipient: recipientAddress,
+      },
+      bearerToken: bearerToken,
+    });
+
+    console.log('Transfer completed successfully!');
+    console.log('Transaction hash:', transferResult);
+    
+    return transferResult;
+  } catch (error) {
+    console.error('Transfer failed:', error);
+    throw error;
+  }
+}
+
+// Usage example
+async function sendUSDC(userId: string, recipientAddress: string, amount: string, pin: string) {
+  // First, get the user's wallet
+  const bearerToken = await getBearerToken();
+  
+  const wallet = await browserClient.getWallet({
+    externalUserId: userId,
+    bearerToken: bearerToken,
+  });
+
+  // Then perform the transfer
+  const txHash = await transferTokens(
+    wallet,
+    recipientAddress,
+    amount,
+    pin
+  );
+
+  console.log(`Sent ${amount} USDC to ${recipientAddress}`);
+  console.log(`Transaction: https://starkscan.co/tx/${txHash}`);
+  
+  return txHash;
+}
+```
+
+## Related Methods
+
+- [getWallet](/sdk/other-frontend/methods/get-wallet) - Get wallet information before transfers
+- [callAnyContract](/sdk/other-frontend/methods/call-any-contract) - For custom contract interactions

@@ -1,0 +1,107 @@
+---
+title: 'callAnyContract'
+description: 'Executes any StarkNet contract method. Handles all contract interactions not covered by specific methods, giving you full flexibility to interact with any smart contract.'
+---
+
+## Usage
+
+```typescript
+const result = await serverClient.callAnyContract({
+  params: {
+    encryptKey: "user-secure-pin",
+    wallet: {
+      publicKey: "0x123...yourPublicKeyHere",
+      encryptedPrivateKey: "encrypted:key:data"
+    },
+    calls: [
+      {
+        contractAddress: "0x...", // Target contract address
+        entrypoint: "methodName", 
+        calldata: ["param1", "param2"] 
+      }
+    ],
+  },
+});
+```
+
+### Parameters
+
+- `encryptKey` (string): User's decryption PIN
+- `wallet` (WalletData): Wallet credentials with publicKey and encryptedPrivateKey
+- `calls` (array): Array of contract calls to execute
+  - `contractAddress` (string): Target contract address
+  - `entrypoint` (string): Contract method name
+  - `calldata` (any[]): Arguments for the contract method
+
+### Return Value
+
+Returns a Promise that resolves to a transaction hash string.
+
+## Example Implementation
+
+```typescript
+import { ChipiServerSDK } from "@chipi-stack/backend";
+
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: process.env.CHIPI_PUBLIC_KEY!,
+  apiSecretKey: process.env.CHIPI_SECRET_KEY!,
+});
+
+async function executeContractCall(
+  wallet: { publicKey: string; encryptedPrivateKey: string },
+  contractAddress: string,
+  methodName: string,
+  parameters: any[],
+  userPin: string
+) {
+  try {
+    const result = await serverClient.callAnyContract({
+      params: {
+        encryptKey: userPin,
+        wallet: wallet,
+        calls: [
+          {
+            contractAddress: contractAddress,
+            entrypoint: methodName,
+            calldata: parameters,
+          }
+        ],
+      },
+    });
+
+    console.log('Contract call successful!');
+    console.log('Transaction hash:', result);
+    
+    return result;
+  } catch (error) {
+    console.error('Contract call failed:', error);
+    throw error;
+  }
+}
+
+// Usage example - Approve tokens for spending
+async function approveTokenSpending(
+  userId: string,
+  tokenContract: string,
+  spenderAddress: string,
+  amount: string,
+  pin: string
+) {
+  // Get user's wallet
+  const wallet = await serverClient.getWallet({
+    externalUserId: userId,
+  });
+
+  // Call the approve method on the token contract
+  const txHash = await executeContractCall(
+    wallet,
+    tokenContract,
+    "approve",
+    [spenderAddress, amount, "0"], // StarkNet uses felt252 for amounts
+    pin
+  );
+
+  console.log(`Approved ${amount} tokens for ${spenderAddress}`);
+  return txHash;
+}
+```

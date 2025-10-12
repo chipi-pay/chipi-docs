@@ -1,0 +1,139 @@
+---
+title: "Backend SDK Quickstart"
+description: "Quick setup guide for the Chipi Backend SDK - server-side wallet management and transactions"
+---
+
+<Warning>
+  The Backend SDK is designed for server-side use only. Never expose your secret API key in client-side code.
+</Warning>
+
+<Steps>
+  <Step title="Install the Backend SDK" titleSize="h2">
+
+<CodeGroup>
+
+```bash npm
+npm install @chipi-stack/backend
+```
+
+```bash yarn
+yarn add @chipi-stack/backend
+```
+
+```bash pnpm
+pnpm add @chipi-stack/backend
+```
+
+</CodeGroup>
+
+  </Step>
+
+  <Step title="Get your API Keys" titleSize="h2">
+
+1. Go to your [API Keys](https://dashboard.chipipay.com/configure/api-keys) in the Chipi Dashboard
+2. Copy your **Public Key** (`pk_prod_xxxx`) and **Secret Key** (`sk_prod_xxxx`)
+
+<Warning>
+  Keep your Secret Key secure and never expose it in client-side code or version control.
+</Warning>
+
+  </Step>
+
+  <Step title="Initialize the SDK" titleSize="h2">
+
+Create a new instance of the ChipiServerSDK with your API keys:
+
+```typescript
+import { ChipiServerSDK } from "@chipi-stack/backend";
+
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: "pk_prod_your_public_key",
+  apiSecretKey: "sk_prod_your_secret_key",
+});
+```
+
+  </Step>
+
+  <Step title="Create Your First Wallet" titleSize="h2">
+
+Now you can create a wallet for your users:
+
+```typescript
+const newWallet = await serverClient.createWallet({
+  params: {
+    encryptKey: "user-secure-pin",
+    externalUserId: "your-user-id-123",
+  },
+});
+
+console.log('New wallet created:', newWallet);
+// Output: { wallet: { publicKey: "0x...", encryptedPrivateKey: "..." }, txHash: "0x..." }
+```
+
+  </Step>
+
+  <Step title="Make Your First Transfer" titleSize="h2">
+
+Transfer tokens between wallets:
+
+```typescript
+const transferResult = await serverClient.transfer({
+  params: {
+    encryptKey: "user-secure-pin",
+    wallet: {
+      publicKey: newWallet.wallet.publicKey,
+      encryptedPrivateKey: newWallet.wallet.encryptedPrivateKey,
+    },
+    amount: "100",
+    token: "USDC",
+    recipient: "0x1234567890abcdef...",
+  },
+});
+
+console.log('Transfer completed:', transferResult);
+```
+
+  </Step>
+
+  <Step title="Environment Variables (Recommended)" titleSize="h2">
+
+For production applications, store your API keys as environment variables:
+
+```bash
+# .env
+CHIPI_PUBLIC_KEY=pk_prod_your_public_key
+CHIPI_SECRET_KEY=sk_prod_your_secret_key
+```
+
+Then initialize the SDK:
+
+```typescript
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: process.env.CHIPI_PUBLIC_KEY!,
+  apiSecretKey: process.env.CHIPI_SECRET_KEY!,
+});
+```
+
+  </Step>
+
+</Steps>
+
+## Next Steps
+
+Now that you have the basic setup working, explore more advanced features:
+
+- **[Wallet Management](/sdk/backend/wallets)** - Complete wallet operations
+- **[API Reference](/sdk/api/introduction)** - Full API documentation
+
+## Security Best Practices
+
+<Warning>
+  - Never expose your secret API key in client-side code
+  - Use environment variables for API keys in production
+  - Validate user inputs before making API calls
+  - Implement proper error handling and logging
+</Warning>
+
+<Tip>
+  Need help? Join our [Telegram Community](https://t.me/+e2qjHEOwImkyZDVh) for support and to connect with other developers.
+</Tip>

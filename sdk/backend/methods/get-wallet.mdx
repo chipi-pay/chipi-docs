@@ -1,0 +1,89 @@
+---
+title: 'getWallet'
+description: 'Retrieves wallet information for an existing user by their external user ID. This method allows you to fetch wallet details for users who have already created wallets.'
+---
+
+## Usage
+
+```typescript
+const wallet = await serverClient.getWallet({
+  externalUserId: "your-user-id-123",
+});
+```
+
+### Parameters
+
+- `externalUserId` (string): Your application's unique identifier for the user
+
+### Return Value
+
+Returns a Promise that resolves to an object containing:
+
+- `publicKey` (string): The wallet's public address on StarkNet
+- `encryptedPrivateKey` (string): The encrypted private key for the wallet
+
+## Example Implementation
+
+```typescript
+import { ChipiServerSDK } from "@chipi-stack/backend";
+
+const serverClient = new ChipiServerSDK({
+  apiPublicKey: process.env.CHIPI_PUBLIC_KEY!,
+  apiSecretKey: process.env.CHIPI_SECRET_KEY!,
+});
+
+async function getUserWallet(userId: string) {
+  try {
+    const wallet = await serverClient.getWallet({
+      externalUserId: userId,
+    });
+
+    console.log('Wallet found:');
+    console.log('Address:', wallet.publicKey);
+    
+    return wallet;
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      console.log('No wallet found for user:', userId);
+      return null;
+    }
+    
+    console.error('Error retrieving wallet:', error);
+    throw error;
+  }
+}
+
+// Usage example
+async function checkUserWallet(userId: string) {
+  const wallet = await getUserWallet(userId);
+  
+  if (wallet) {
+    console.log(`User ${userId} has wallet: ${wallet.publicKey}`);
+    return wallet;
+  } else {
+    console.log(`User ${userId} needs to create a wallet`);
+    return null;
+  }
+}
+```
+
+
+## Security Considerations
+
+<Warning>
+**Important Security Notes:**
+- Never expose encrypted private keys in API responses
+- Validate user IDs before making requests
+- Implement proper access controls in your application
+- Use HTTPS for all communications
+- Log wallet access for audit purposes
+</Warning>
+
+<Note>
+  Chipi never stores your decrypted sensitive data. All private keys remain encrypted and are never accessible to Chipi servers.
+</Note>
+
+## Related Methods
+
+- [createWallet](/sdk/backend/methods/create-wallet) - Create a new wallet for users who don't have one
+- [transfer](/sdk/backend/methods/transfer) - Send tokens from the retrieved wallet

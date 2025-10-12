@@ -1,0 +1,80 @@
+---
+title: 'getWallet'
+description: 'Retrieves wallet information for an existing user by their external user ID. This method allows you to fetch wallet details for users who have already created wallets.'
+---
+
+## Usage
+
+```typescript
+const bearerToken = await getBearerToken(); // Your auth implementation
+
+const wallet = await browserClient.getWallet({
+  externalUserId: "your-user-id-123",
+  bearerToken: bearerToken,
+});
+```
+
+### Parameters
+
+- `externalUserId` (string): Your application's unique identifier for the user
+- `bearerToken` (string): Bearer token for authentication
+
+### Return Value
+
+Returns a Promise that resolves to an object containing:
+
+- `publicKey` (string): The wallet's public address on StarkNet
+- `encryptedPrivateKey` (string): The encrypted private key for the wallet
+
+## Example Implementation
+
+```typescript
+import { ChipiBrowserSDK } from "@chipi-stack/backend";
+
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: process.env.VITE_CHIPI_PUBLIC_KEY, // or your framework's env var
+});
+
+async function getUserWallet(userId: string) {
+  try {
+    const bearerToken = await getBearerToken(); // Your auth implementation
+    
+    const wallet = await browserClient.getWallet({
+      externalUserId: userId,
+      bearerToken: bearerToken,
+    });
+
+    console.log('Wallet found:');
+    console.log('Address:', wallet.publicKey);
+    
+    return wallet;
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      console.log('No wallet found for user:', userId);
+      return null;
+    }
+    
+    console.error('Error retrieving wallet:', error);
+    throw error;
+  }
+}
+
+// Usage example
+async function checkUserWallet(userId: string) {
+  const wallet = await getUserWallet(userId);
+  
+  if (wallet) {
+    console.log(`User ${userId} has wallet: ${wallet.publicKey}`);
+    return wallet;
+  } else {
+    console.log(`User ${userId} needs to create a wallet`);
+    return null;
+  }
+}
+```
+
+
+## Related Methods
+
+- [createWallet](/sdk/other-frontend/methods/create-wallet) - Create a new wallet for users who don't have one
+- [transfer](/sdk/other-frontend/methods/transfer) - Send tokens from the retrieved wallet
