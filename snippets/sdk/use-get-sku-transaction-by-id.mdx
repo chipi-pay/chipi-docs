@@ -1,0 +1,72 @@
+---
+title: "useGetSkuTransactionById"
+description: "Retrieves a specific SKU transaction by its ID."
+---
+
+## Usage
+
+```typescript
+const { 
+  data, 
+  isLoading, 
+  isError, 
+  error, 
+  isSuccess,
+  fetchSkuTransactionById 
+} = useGetSkuTransactionById();
+```
+
+### Parameters
+
+- `id` (string): The unique identifier of the SKU transaction to retrieve
+- `getBearerToken` (function): Function that returns a bearer token for authentication
+
+### Return Value
+
+Returns an object containing:
+
+- `data`: The SKU transaction data (SkuTransaction | undefined)
+- `isLoading`: Boolean indicating if the operation is in progress
+- `isError`: Boolean indicating if the operation failed
+- `error`: Any error that occurred during the process
+- `isSuccess`: Boolean indicating if the operation completed successfully
+- `fetchSkuTransactionById`: Function to manually fetch a SKU transaction by ID
+
+## Example Implementation
+
+```typescript
+
+export function GetSkuTransactionPage() {
+  const [transactionId, setTransactionId] = useState<string>("");
+  const [transactionData, setTransactionData] = useState<any>(null);
+  
+  const { 
+    data, 
+    isLoading, 
+    isError, 
+    error, 
+    isSuccess,
+    fetchSkuTransactionById 
+  } = useGetSkuTransactionById({
+    id: transactionId,
+    getBearerToken: async () => {
+      const token = await getToken();
+      return token || "";
+    }
+  });
+
+  const handleFetchTransaction = async () => {
+    try {
+      const token = await getToken();
+      const result = await fetchSkuTransactionById({
+        id: transactionId,
+        getBearerToken: async () => token || "",
+      });
+      setTransactionData(result);
+    } catch (error) {
+      console.error("Error fetching SKU transaction:", error);
+    }
+  };
+}
+```
+

@@ -1,0 +1,92 @@
+---
+title: 'getSkus'
+description: 'Retrieves a list of service SKUs that are available for purchase'
+---
+
+## Usage
+
+```typescript
+const bearerToken = await getBearerToken(); // Your auth implementation
+
+const skus = await browserClient.getSkus({
+  query: {
+    page: 1,
+    limit: 10,
+    offset: 0,
+    category: "TELEFONIA"
+  },
+  bearerToken: bearerToken,
+});
+```
+
+### Parameters
+
+- `query` (GetSkusQuery): Object containing pagination and filtering options
+- `bearerToken` (string): Bearer token for authentication
+
+### Query Parameters
+
+- `page` (number, optional): Page number for pagination (default: 1)
+- `limit` (number, optional): Number of SKUs to return per page (default: 10)
+- `offset` (number, optional): Number of SKUs to skip from the beginning (default: 0)
+- `category` (SkuCategory, optional): Filter SKUs by specific category
+- `provider` (string, optional): Filter SKUs by provider (e.g., "PAP", "TET", "PAP_RECARGA", "PAP_TAE")
+
+### Available SKU Categories
+
+- `TELEPEAJE`: Electronic toll payment services
+- `TELEFONIA`: Telephony or mobile phone services
+- `GENERAL`: General category for miscellaneous SKUs
+- `TESORERIA`: Treasury or payment services
+- `LUZ`: Electricity or utility bill payments
+- `INTERNET`: Internet service payments or packages
+- `TV`: Television or cable subscription services
+- `MOVILIDAD`: Mobility-related services (e.g., transit, transportation)
+- `RECARGAS`: Prepaid mobile or service top-ups
+- `GIFT_CARDS`: Various gift cards available for purchase
+- `GAMING`: Video game-related products or services
+- `VENTAS_CATALOGO`: Catalog sales or retail products
+- `DEPORTES`: Sports-related goods or services
+- `STREAMING`: Streaming service subscriptions (e.g., video or music platforms)
+
+
+## Example Implementation
+
+```typescript
+import { ChipiBrowserSDK } from "@chipi-stack/backend";
+
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: process.env.VITE_CHIPI_PUBLIC_KEY, // or your framework's env var
+});
+
+async function getSkus() {
+  try {
+    const bearerToken = await getBearerToken(); // Your auth implementation
+    
+    // Get 10  SKUs from page 2 (skips first 10, returns from  numbers 11 to 20)
+    const skus = await browserClient.getSkus({
+      query: { 
+        page: 2, 
+        limit: 20, 
+        offset: 0,
+        category: "TELEFONIA", // Filter by telephony services
+      },
+      bearerToken: bearerToken,
+    });
+
+    return skus;
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return null;
+    }
+    
+    console.error('Error retrieving SKUs:', error);
+    throw error;
+  }
+}
+```
+
+
+## Related Methods
+
+- [createSkuTransaction](/sdk/other-frontend/methods/create-sku-transaction) - Create a new SKU transaction to buy a product or service

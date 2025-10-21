@@ -1,0 +1,80 @@
+---
+title: "useGetSkus"
+description: "Provides a paginated list of SKUs available for purchase."
+---
+
+## Usage
+
+```typescript
+const { fetchAvailableSkus, isLoading, error, data } = useGetSkus();
+```
+
+### Parameters
+
+- `query` (object): Object containing parameters: limit, page, offset, provider and category. Default values are page 1, limit 10 and offset 0.
+- `getBearerToken` (function): Function that returns a bearer token for authentication
+
+## Available SKU Providers
+
+- `PAP`
+- `PAP_RECARGA`
+- `TET`
+- `PAP_TAE`
+
+## Available SKU Categories
+
+The available SKU categories include:
+
+- `TELEPEAJE`: Electronic toll payment services.
+- `TELEFONIA`: Telephony or mobile phone services.
+- `GENERAL`: General category for miscellaneous SKUs.
+- `TESORERIA`: Treasury or payment services.
+- `LUZ`: Electricity or utility bill payments.
+- `INTERNET`: Internet service payments or packages.
+- `TV`: Television or cable subscription services.
+- `MOVILIDAD`: Mobility-related services (e.g., transit, transportation).
+- `RECARGAS`: Prepaid mobile or service top-ups.
+- `GIFT_CARDS`: Various gift cards available for purchase.
+- `GAMING`: Video game-related products or services.
+- `VENTAS_CATALOGO`: Catalog sales or retail products.
+- `DEPORTES`: Sports-related goods or services.
+- `STREAMING`: Streaming service subscriptions (e.g., video or music platforms).
+
+These categories define the type of products or services you can retrieve and purchase as SKUs using the `useGetSkus` hook.
+
+
+### Return Value
+
+Returns an object containing:
+
+- `fetchAvailableSkus`: Function to get all SKUs available to purchase through Chipi.
+- `data`: List of retrieved SKU data
+- `isLoading`: Boolean indicating if the operation is in progress
+- `error`: Any error that occurred during the process
+
+
+
+
+## Example Implementation
+
+```typescript
+
+export function GetSkusPage() {
+  const [availableSkus, setAvailableSkus] = useState<any[]>([]);
+  const { fetchAvailableSkus, data, isLoading, error } = useGetSkus();
+
+  const loadAvailableSkus = async () => {
+    try {
+      const token = await getToken();
+      const skus = await fetchAvailableSkus({
+        query: { limit: 10, offset: 0, provider: "PAP" },
+        getBearerToken: async () => token || "",
+      });
+      setAvailableSkus(skus.data || []);
+    } catch (error) {
+      console.error("Error loading SKUs:", error);
+    }
+  };
+}
+```
+

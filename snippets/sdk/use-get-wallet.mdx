@@ -7,11 +7,10 @@ description: 'This hook retrieves a wallet by an external user ID. Only an authe
 
 ```typescript
 const { 
-  getWalletAsync, 
-  useGetWallet,
+  fetchWallet, 
   data, 
   isLoading, 
-  error 
+  error
 } = useGetWallet();
 ```
 
@@ -24,8 +23,8 @@ const {
 
 Returns an object containing:
 
-- `useGetWallet`: Function to trigger token transfer
-- `transferData`: Transaction hash of the transfer
+- `fetchWallet`: Function to trigger token transfer
+- `data`: data containing the public key od the wallet as well as the encrypted private key.
 - `isLoading`: Boolean indicating if the operation is in progress
 - `error`: Any error that occurred during the process
 
@@ -36,37 +35,42 @@ Returns an object containing:
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useGetWallet } from "@chipi-stack/nextjs";
 
-export function useWalletWithAuth() {
-  const { isLoaded, user } = useUser();
-  const { getToken, isLoaded: isUserLoaded } = useAuth();
-  const { getWalletAsync } = useGetWallet();
-  const query = useQuery({
-    queryKey: ["wallet"],
-    enabled: isLoaded && isUserLoaded && !!user?.id ,
-    queryFn: async () => {
-      const token = await getToken();
-      if (!token || !user?.id) throw new Error("Missing auth data");
-      const wallet = await getWalletAsync({
-        externalUserId: user.id,
-        bearerToken: token,
+export function WalletPage(){
+  const [walletId, setWalletId] = useState("");
+  const user = useUser();
+  const { getToken } = useAuth();
+  const getWallet = async () => {
+    if (!user.user?.id) return;
+    try {
+      const newToken = await getToken();
+     
+      if (!newToken) {
+        throw new Error("No token found");
+      }
+      const wallet = await fetchWallet({
+        params: {
+          externalUserId: user.user.id,
+        },
+        getBearerToken: async () => newToken,
       });
-      if (!wallet) throw new Error("Wallet not found");
-      return wallet;
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    retry: false,
-  });
+   
+      setWalletId(wallet?.publicKey || "");
+      if (!wallet.publicKey) {
+        throw new Error("No wallet found");
+      }
+      setWalletId(wallet.publicKey);
 
-  return {
-    wallet: query.data,
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error,
-    refetch: query.refetch,
+      if (!newToken) {
+        throw new Error("API public key is not set");
+      }
+
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   };
-}
-                        
+
+}                      
 ```
 
 <Warning>
