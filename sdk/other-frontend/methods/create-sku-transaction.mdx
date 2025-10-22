@@ -1,0 +1,97 @@
+---
+title: 'createSkuTransaction'
+description: 'Allows the purchase of a service with crypto using Chipi'
+---
+
+## Usage
+
+```typescript
+const bearerToken = await getBearerToken(); // Your auth implementation
+
+const transaction = await browserClient.createSkuTransaction({
+  params: {
+    wallet: {
+        publicKey:"0x...",
+        encryptedPrivateKey:"0x..."
+    },
+    skuId: "sku-123",
+    mxnAmount:10,
+    reference: "34563234342",
+    encryptKey: "12345"
+    externalUserId: "user-1234"
+  },
+  bearerToken: bearerToken,
+});
+```
+
+### Parameters
+
+- `params` (CreateSkuTransactionParams): Object containing all the data needed to record and perform the transaction 
+- `bearerToken` (string): Bearer token for authentication
+
+### Parameters
+
+#### WalletData Interface
+```typescript
+interface WalletData {
+    publicKey: string;
+    encryptedPrivateKey: string;
+}
+```
+
+#### CreateSkuTransactionParams Interface
+```typescript
+interface CreateSkuTransactionParams {
+    wallet: WalletData;           // Wallet data containing public key and encrypted private key
+    skuId: string;                // Unique identifier for the SKU to purchase
+    mxnAmount: number;            // Amount in Mexican Pesos (MXN) for the transaction
+    reference: string;            // Reference number for tracking the transaction
+    encryptKey: string;           // Encryption key for securing the transaction
+    externalUserId: string;      // External user identifier
+}
+```
+## Example Implementation
+
+```typescript
+import { ChipiBrowserSDK } from "@chipi-stack/backend";
+
+const browserClient = new ChipiBrowserSDK({
+  apiPublicKey: process.env.VITE_CHIPI_PUBLIC_KEY, // or your framework's env var
+});
+
+async function createSkuTransaction() {
+  try {
+    const bearerToken = await getBearerToken(); // Your auth implementation
+    
+    // Create a SKU transaction for purchasing a service
+    const response = await browserClient.createSkuTransaction({
+      params: {
+        wallet: {
+            publicKey: "your-wallet-public-key",
+            encryptedPrivateKey: "your-encrypted-private-key"
+        },
+        skuId: "sku-1234",
+        mxnAmount: 10,
+        reference: "4566301598",
+        encryptKey: "2456",
+        externalUserId: "your-external-userId"
+      },
+      bearerToken: bearerToken,
+    });
+
+    return response;
+  } catch (error) {
+    if (error.message.includes('not found')) {
+      return null;
+    }
+    
+    console.error('Error creating SKU transaction:', error);
+    throw error;
+  }
+}
+```
+
+
+## Related Methods
+- [getSkus](/sdk/other-frontend/methods/get-skus) - Retrieve available SKUs for purchase
+- [getSkuTransactionById](/sdk/other-frontend/methods/get-sku-transaction-by-id) - Get transaction details by ID

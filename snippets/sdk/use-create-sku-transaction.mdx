@@ -1,0 +1,93 @@
+---
+title: "useCreateSkuTransaction"
+description: "Creates a transaction to purchase a service or product through Chipi."
+---
+
+## Usage
+
+```typescript
+const { 
+  createSkuTransaction, 
+  createSkuTransactionAsync, 
+  data, 
+  isLoading, 
+  isError, 
+  error, 
+  isSuccess, 
+  reset 
+} = useCreateSkuTransaction();
+```
+
+### Parameters
+
+The hook accepts an input object with the following structure:
+
+```typescript
+type CreateSkuTransactionInput = {
+  params: CreateSkuTransactionParams;
+  bearerToken: string;
+};
+```
+
+- `params` (CreateSkuTransactionParams): Object containing the wallet data and SKU information
+- `bearerToken` (string): Bearer token for authentication
+
+### CreateSkuTransactionParams
+
+- `wallet` (WalletData): The wallet data object containing wallet information and credentials
+- `skuId` (string): The unique identifier of the SKU (Stock Keeping Unit) to purchase
+- `mxnAmount` (number): The amount to be charged in Mexican Pesos (MXN)
+- `reference` (string): A unique reference number for the transaction (e.g., phone number, account number)
+- `encryptKey` (string): Encryption key used for secure transaction processing
+- `externalUserId` (string): The external user identifier associated with the transaction
+
+### Return Value
+
+Returns an object containing:
+
+- `createSkuTransaction`: Function to create a SKU transaction (fire-and-forget)
+- `createSkuTransactionAsync`: Async function to create a SKU transaction and return a Promise
+- `data`: The created SKU transaction data (SkuTransaction | undefined)
+- `isLoading`: Boolean indicating if the operation is in progress
+- `isError`: Boolean indicating if the operation failed
+- `error`: Any error that occurred during the process
+- `isSuccess`: Boolean indicating if the operation completed successfully
+- `reset`: Function to reset the mutation state
+
+## Example Implementation
+
+```typescript
+
+export function CreateSkuTransactionPage() {
+  const [transactionResult, setTransactionResult] = useState<any>(null);
+  const { 
+    createSkuTransactionAsync, 
+    data, 
+    isLoading, 
+    isError, 
+    error, 
+    isSuccess 
+  } = useCreateSkuTransaction();
+  const { data: wallet } = useGetWallet();
+  const handleCreateTransaction = async () => {
+    try {
+      const token = await getToken();
+      const result = await createSkuTransactionAsync({
+        params: {
+          wallet,
+          skuId: "sku-tl-ATT010",
+          mxnAmount: 10,
+          reference: "44559012345",
+          encryptKey: "123456",
+          externalUserId: user.id,
+        },
+        bearerToken: token || "",
+      });
+      setTransactionResult(result);
+    } catch (error) {
+      console.error("Error creating SKU transaction:", error);
+    }
+  };
+}
+```
+

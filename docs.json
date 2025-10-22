@@ -54,7 +54,10 @@
               "sdk/nextjs/hooks/use-transfer",
               "sdk/nextjs/hooks/use-stake-vesu-usdc",
               "sdk/nextjs/hooks/use-withdraw-vesu-usdc",
-              "sdk/nextjs/hooks/use-get-wallet"
+              "sdk/nextjs/hooks/use-get-wallet",
+              "sdk/nextjs/hooks/use-get-skus",
+              "sdk/nextjs/hooks/use-create-sku-transaction",
+              "sdk/nextjs/hooks/use-get-sku-transaction-by-id"
             ]
           },
           {
@@ -104,7 +107,10 @@
               "sdk/expo/hooks/use-transfer",
               "sdk/expo/hooks/use-record-transaction",
               "sdk/expo/hooks/use-call-any-contract",
-              "sdk/expo/hooks/use-get-wallet"
+              "sdk/expo/hooks/use-get-wallet",
+              "sdk/expo/hooks/use-get-skus",
+              "sdk/expo/hooks/use-create-sku-transaction",
+              "sdk/expo/hooks/use-get-sku-transaction-by-id"
             ]
           }
         ]
@@ -139,7 +145,10 @@
               "sdk/react/hooks/use-transfer",
               "sdk/react/hooks/use-record-transaction",
               "sdk/react/hooks/use-call-any-contract",
-              "sdk/react/hooks/use-get-wallet"
+              "sdk/react/hooks/use-get-wallet",
+              "sdk/react/hooks/use-get-skus",
+              "sdk/react/hooks/use-create-sku-transaction",
+              "sdk/react/hooks/use-get-sku-transaction-by-id"
             ]
           }
         ]
@@ -162,7 +171,10 @@
               "sdk/other-frontend/methods/create-wallet",
               "sdk/other-frontend/methods/get-wallet",
               "sdk/other-frontend/methods/transfer",
-              "sdk/other-frontend/methods/call-any-contract"
+              "sdk/other-frontend/methods/call-any-contract",
+              "sdk/other-frontend/methods/get-skus",
+              "sdk/other-frontend/methods/create-sku-transaction",
+              "sdk/other-frontend/methods/get-sku-transaction-by-id"
             ]
           }
         ]
@@ -185,7 +197,10 @@
               "sdk/backend/methods/create-wallet",
               "sdk/backend/methods/get-wallet",
               "sdk/backend/methods/transfer",
-              "sdk/backend/methods/call-any-contract"
+              "sdk/backend/methods/call-any-contract",
+              "sdk/backend/methods/get-skus",
+              "sdk/backend/methods/create-sku-transaction",
+              "sdk/backend/methods/get-sku-transaction-by-id"
             ]
           }
         ]
@@ -234,7 +249,10 @@
               "sdk/api/hooks/use-create-wallet",
               "sdk/api/hooks/use-stake-vesu-usdc",
               "sdk/api/hooks/use-transfer",
-              "sdk/api/hooks/use-withdraw-vesu-usdc"
+              "sdk/api/hooks/use-withdraw-vesu-usdc",
+              "sdk/api/hooks/use-get-skus",
+              "sdk/api/hooks/use-create-sku-transaction",
+              "sdk/api/hooks/use-get-sku-transaction-by-id"
             ]
           }
         ]
