@@ -87,12 +87,22 @@ VITE_CHIPI_API_KEY=pk_prod_xxxx
 // App.tsx
 
 import { ChipiProvider } from "@chipi-stack/chipi-react";
+const API_PUBLIC_KEY = process.env.VITE_CHIPI_API_KEY;
+if (!API_PUBLIC_KEY) throw new Error("API_PUBLIC_KEY is not set");
 
 export default function App() {
+  // ...
   return (
-    <ChipiProvider>{/* Your app components */}</ChipiProvider>
+    <ChipiProvider
+      config={{
+        apiPublicKey: API_PUBLIC_KEY,
+      }}
+    >
+      <Stack />;
+    </ChipiProvider>
   );
 }
+
 ```
 
 </Step>
